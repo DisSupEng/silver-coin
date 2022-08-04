@@ -1,1 +1,7 @@
-./venv
+/venv
+/.env
+# Remove once you set up an actual database
+db.sqlite3
+
+__pycache__/
+*.py[cod]
