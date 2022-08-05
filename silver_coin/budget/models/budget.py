@@ -1,16 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from ..helpers import DAYS, WEEKS, MONTHS, YEARS
+
 class Budget(models.Model):
     """
     This model is the core of the project and what the other models will be based around.
     """
 
     PERIOD_CHOICES = [
-        ("days", "Days"),
-        ("weeks", "Weeks"),
-        ("months", "Months"),
-        ("years", "Years"),
+        (DAYS, "Days"),
+        (WEEKS, "Weeks"),
+        (MONTHS, "Months"),
+        (YEARS, "Years"),
     ]
 
     budget_id = models.AutoField(primary_key=True)
