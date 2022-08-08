@@ -1,12 +1,7 @@
-from re import U
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.forms import RadioSelect
-
-from .budget import Budget
-from .budget_period import BudgetPeriod
 
 class AmountManager(models.Manager):
     def create_amount(self, amount, parent):
@@ -55,8 +50,8 @@ class Amount(models.Model):
     amount_type = models.CharField(choices=AMOUNT_TYPES, null=False, blank=False, max_length=2, verbose_name="Type")
     # The maximum number of digits including decimal places is 7
     amount = models.DecimalField(null=False, blank=False, max_digits=7, decimal_places=2, validators=[MinValueValidator(0.01, "Amount must be positive, mark as Expense if outgoing cost")])
-    budget = models.ForeignKey(Budget, null=True, blank=True, default=None, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
-    budget_period = models.ForeignKey(BudgetPeriod, null=True, blank=True, default=None, db_column="budget_period", on_delete=models.CASCADE, verbose_name="Budget Period")
+    budget = models.ForeignKey("Budget", null=True, blank=True, default=None, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
+    budget_period = models.ForeignKey("BudgetPeriod", null=True, blank=True, default=None, db_column="budget_period", on_delete=models.CASCADE, verbose_name="Budget Period")
     # An Amount should be linked to the User
     owner = models.ForeignKey(User, null=False, blank=True, editable=False, db_column="owner", on_delete=models.CASCADE)
 

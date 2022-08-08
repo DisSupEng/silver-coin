@@ -4,8 +4,7 @@ from datetime import timedelta
 
 from ..helpers import DAYS, WEEKS, MONTHS, YEARS
 
-from .amount import Amount
-from .budget import Budget
+from ..models import Amount
 
 class BudgetPeriod(models.Model):
     """
@@ -19,7 +18,7 @@ class BudgetPeriod(models.Model):
     end_date = models.DateField(null=False, blank=False, editable=False, verbose_name="End Date")
     # Actual Expenses are defined on the Amount model
     # Actual Incomes are defined on the Amount model
-    budget = models.ForeignKey(Budget, null=False, blank=False, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
+    budget = models.ForeignKey("Budget", null=False, blank=False, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
 
     def save(self, *args, **kwargs):
         period_length = self.budget.period_length
