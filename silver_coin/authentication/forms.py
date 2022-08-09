@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 
 class SignupForm(forms.Form):
 
+    preferred_name  = forms.CharField(required=True, min_length=1, max_length=50)
     email = forms.EmailField(required=True)
     password = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
     password_confirmation = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
