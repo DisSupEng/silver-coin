@@ -1,10 +1,13 @@
 from django import forms
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-class SignupForm(forms.Form):
+class SignupForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("username", "email")
 
-    preferred_name  = forms.CharField(required=True, min_length=1, max_length=50)
-    email = forms.EmailField(required=True)
+    # Password fields are not model related
     password = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
     password_confirmation = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
 
