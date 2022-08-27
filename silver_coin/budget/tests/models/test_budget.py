@@ -24,19 +24,17 @@ class BudgetTests(Authenticate):
 
     def test_name_character_limit(self):
         self.budget.name = "t" * 26
-        with self.assertRaisesMessage(ValidationError, "name cannot be greater than 25 characters"):
+        with self.assertRaisesMessage(ValidationError, "Name cannot be greater than 25 characters"):
             self.budget.full_clean()
 
     def test_description_character_limit(self):
         self.budget.description = "t" * 251
-        print("Testing")
-        print(self.budget.full_clean())
-        with self.assertRaisesMessage(ValidationError, "description cannot be greater than 250 characters"):
+        with self.assertRaisesMessage(ValidationError, "Description cannot be greater than 250 characters"):
             self.budget.full_clean()
 
     def test_invalid_period_type(self):
         self.budget.period_type = "invalid"
-        with self.assertRaisesMessage(ValidationError, "Invalid Period Type"):
+        with self.assertRaisesMessage(ValidationError, "Value \'invalid\' is not a valid choice."):
             self.budget.full_clean()
 
     def test_invalid_period_length(self):
