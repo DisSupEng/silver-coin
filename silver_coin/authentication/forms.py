@@ -6,6 +6,7 @@ class SignupForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("username", "email")
+        help_texts = {"username": ""}
 
     # Password fields are not model related
     password = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput, label="Password")
