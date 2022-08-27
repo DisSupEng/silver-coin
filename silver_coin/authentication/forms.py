@@ -8,8 +8,8 @@ class SignupForm(forms.ModelForm):
         fields = ("username", "email")
 
     # Password fields are not model related
-    password = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
-    password_confirmation = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
+    password = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput, label="Password")
+    password_confirmation = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput, label="Password Confirmation")
 
 
     def clean(self):
