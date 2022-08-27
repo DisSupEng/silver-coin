@@ -13,6 +13,9 @@ class AmountManager(models.Manager):
         The name, amount_type and amount will be copied and the parent will be assigned to either the
         budget or budget_period depending on the type of the parent.
         """
+        # Need to import here to avoid circular import
+        from . import Budget, BudgetPeriod
+
         if parent.__class__ == Budget:
             # Link it to a Budget
             self.create(

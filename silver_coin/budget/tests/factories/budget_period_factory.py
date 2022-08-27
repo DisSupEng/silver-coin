@@ -1,7 +1,6 @@
-from factory import SubFactory
 from factory.django import DjangoModelFactory
 
-from ...models import BudgetPeriod, Budget
+from ...models import BudgetPeriod
 
 class BudgetPeriodFactory(DjangoModelFactory):
     class Meta:

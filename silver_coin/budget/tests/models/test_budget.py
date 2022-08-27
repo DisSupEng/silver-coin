@@ -1,11 +1,16 @@
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from ..factories import BudgetFactory
 
-# TODO: Implement Authentication helper
+class Authenticate(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="testUser")
+        self.user.set_password("test123")
+        self.user.save()
 
-class BudgetTests(TestCase):
+class BudgetTests(Authenticate):
 
     def setUp(self):
         """
@@ -24,6 +29,8 @@ class BudgetTests(TestCase):
 
     def test_description_character_limit(self):
         self.budget.description = "t" * 251
+        print("Testing")
+        print(self.budget.full_clean())
         with self.assertRaisesMessage(ValidationError, "description cannot be greater than 250 characters"):
             self.budget.full_clean()
 
