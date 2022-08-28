@@ -1,14 +1,8 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
+from ..helpers import Authenticate
 from ..factories import BudgetFactory
-
-class Authenticate(TestCase):
-    def setUp(self):
-        self.user = User.objects.create(username="testUser")
-        self.user.set_password("test123")
-        self.user.save()
 
 class BudgetTests(Authenticate):
 
@@ -22,6 +16,15 @@ class BudgetTests(Authenticate):
         self.budget = BudgetFactory.create(owner=self.user)
 
 
+    def test_name_blank(self):
+        self.budget.name = None
+        with self.assertRaisesMessage(ValidationError, "This field cannot be null"):
+            self.budget.full_clean()
+        
+        self.budget.name = ""
+        with self.assertRaisesMessage(ValidationError, "This field cannot be blank"):
+            self.budget.full_clean()
+    
     def test_name_character_limit(self):
         self.budget.name = "t" * 26
         with self.assertRaisesMessage(ValidationError, "Name cannot be greater than 25 characters"):

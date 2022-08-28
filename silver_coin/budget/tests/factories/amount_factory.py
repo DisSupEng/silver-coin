@@ -8,8 +8,8 @@ class AmountFactory(DjangoModelFactory):
 
     name = "Food"
     amount_type = "EX"
-    # TODO: Implement budget factory
+    amount = 100
+    # These fields are set in the tests
     budget = None
     budget_period = None
-    # TODO: Implement User factory
     owner = None
