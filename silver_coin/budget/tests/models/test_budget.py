@@ -1,8 +1,7 @@
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from ..helpers import Authenticate
-from ..factories import BudgetFactory
+from ..factories import BudgetFactory, AmountFactory
 
 class BudgetTests(Authenticate):
 
@@ -54,9 +53,54 @@ class BudgetTests(Authenticate):
         with self.assertRaisesMessage(ValidationError, "Budget must be linked to a User"):
             self.budget.full_clean()
 
-    # TODO: Add tests for expenses and incomes
     def test_get_expenses(self):
-        pass
+        income = AmountFactory.create(
+            name="Income",
+            amount_type="IN",
+            amount=300,
+            budget=self.budget,
+            owner=self.user
+        )
+        food_expense = AmountFactory.create(
+            name="Food",
+            amount_type="EX",
+            amount=100,
+            budget=self.budget,
+            owner=self.user
+        )
+        power_expense = AmountFactory.create(
+            name="Power",
+            amount_type="EX",
+            amount=100,
+            budget=self.budget,
+            owner=self.user
+        )
+
+        expenses = self.budget.amount_set.filter(amount_type="EX")
+        self.assertEquals(expenses.count(), 2)
 
     def test_get_incomes(self):
-        pass
+        income = AmountFactory.create(
+            name="Income",
+            amount_type="IN",
+            amount=300,
+            budget=self.budget,
+            owner=self.user
+        )
+        food_expense = AmountFactory.create(
+            name="Food",
+            amount_type="EX",
+            amount=100,
+            budget=self.budget,
+            owner=self.user
+        )
+        power_expense = AmountFactory.create(
+            name="Power",
+            amount_type="EX",
+            amount=100,
+            budget=self.budget,
+            owner=self.user
+        )
+
+        income = self.budget.amount_set.filter(amount_type="IN")
+        self.assertEquals(income.count(), 1)
