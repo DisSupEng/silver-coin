@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
+
+from dateutil.relativedelta import relativedelta
 
 from ..helpers import DAYS, WEEKS, MONTHS, YEARS
 
@@ -22,17 +24,16 @@ class BudgetPeriod(models.Model):
 
     def save(self, *args, **kwargs):
         period_length = self.budget.period_length
+        start_datetime = datetime.combine(self.start_date, datetime.min.time())
 
         if self.budget.period_type == DAYS:
-            self.end_date = self.start_date + timedelta(days=period_length)
+            self.end_date = (start_datetime + relativedelta(days=period_length)).date()
         elif self.budget.period_type == WEEKS:
-            self.end_date = self.start_date + timedelta(weeks=period_length)
-        elif self.budget.period_type == MONTHS:
-            # Timedelta can't do months, calculate using weeks instead
-            self.end_date = self.start_date + timedelta(weeks=4*period_length)
+            self.end_date = (start_datetime + relativedelta(weeks=period_length)).date()
         else:
-            # Timedelta can't do years, calculate using weeks instead
-            self.end_date = self.start_date + timedelta(52*period_length)
+            # Timedelta can't do months, calculate using weeks instead
+            self.end_date = (start_datetime + relativedelta(months=period_length)).date()
+        
 
         super().save(*args, **kwargs)
 

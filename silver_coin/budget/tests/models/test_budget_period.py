@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from django.core.exceptions import ValidationError
 
 from ..helpers import Authenticate
@@ -23,6 +23,40 @@ class BudgetPeriodTests(Authenticate):
         self.budget.save()
 
 
-        self.budget_period.start_date = datetime.strptime("2022-08-22", "%Y-%M-%d").date()
+        self.budget_period.start_date = datetime.strptime("2022-08-22", "%Y-%m-%d").date()
         self.budget_period.save()
+
+        self.assertEquals(self.budget_period.end_date, date(2022, 8, 26))
+
+    def test_end_date_weeks(self):
+        self.budget.period_type = "weeks"
+        self.budget.period_length = 6
+        self.budget.save()
+
+        self.budget_period.start_date = datetime.strptime("2022-08-22", "%Y-%m-%d").date()
+        self.budget_period.save()
+
+        self.assertEquals(self.budget_period.end_date, date(2022, 10, 3))
+
+    def test_end_date_months(self):
+        self.budget.period_type = "months"
+        self.budget.period_length = 9
+        self.budget.save()
+
+        self.budget_period.start_date = datetime.strptime("2022-08-22", "%Y-%m-%d").date()
+        self.budget_period.save()
+
+        self.assertEquals(self.budget_period.end_date, date(2023, 5, 22))
+
+    def test_is_ended(self):
+        self.budget.period_type = "days"
+        self.budget.period_length = 4
+        self.budget.save()
+
+
+        self.budget_period.start_date = datetime.strptime("2022-08-22", "%Y-%m-%d").date()
+        self.budget_period.save()
+
+        self.assertEquals(self.budget_period.is_ended(), True)
+
     

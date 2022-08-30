@@ -22,7 +22,8 @@ class AmountManager(models.Manager):
                 name=amount.name, 
                 amount_type=amount.amount_type, 
                 amount=amount.amount,
-                budget=parent
+                budget=parent,
+                owner=parent.owner
             )
         elif parent.__class__ == BudgetPeriod:
             # Link it to a Budget Period
@@ -30,7 +31,8 @@ class AmountManager(models.Manager):
                 name=amount.name, 
                 amount_type=amount.amount_type, 
                 amount=amount.amount,
-                budget_period=parent
+                budget_period=parent,
+                owner=parent.budget.owner
             )
         else:
             # Parent is not a Budget or BudgetPeriod, raise an error
