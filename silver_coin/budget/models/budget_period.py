@@ -23,26 +23,33 @@ class BudgetPeriod(models.Model):
     budget = models.ForeignKey("Budget", null=False, blank=False, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
 
     def save(self, *args, **kwargs):
-        period_length = self.budget.period_length
-        start_datetime = datetime.combine(self.start_date, datetime.min.time())
+        # Only set the end date and create amounts if it is the first time saving
+        if self._state.adding:
+            period_length = self.budget.period_length
+            start_datetime = datetime.combine(self.start_date, datetime.min.time())
 
-        if self.budget.period_type == DAYS:
-            self.end_date = (start_datetime + relativedelta(days=period_length)).date()
-        elif self.budget.period_type == WEEKS:
-            self.end_date = (start_datetime + relativedelta(weeks=period_length)).date()
+            if self.budget.period_type == DAYS:
+                self.end_date = (start_datetime + relativedelta(days=period_length)).date()
+            elif self.budget.period_type == WEEKS:
+                self.end_date = (start_datetime + relativedelta(weeks=period_length)).date()
+            else:
+                # Timedelta can't do months, calculate using weeks instead
+                self.end_date = (start_datetime + relativedelta(months=period_length)).date()
+            
+
+            super().save(*args, **kwargs)
+
+            # Create the Incomes and Expense for this Budget Period
+            costs = Amount.objects.filter(budget=self.budget)
+            for cost in costs.all():
+                # Copy the estimates from the budget as they are currently
+                Amount.objects.create_amount(cost, self)
+                # Create the actual amount, set to 0. These will be adjusted as the costs come in
+                Amount.objects.create_amount(cost, self, True)
+            
+            return None
         else:
-            # Timedelta can't do months, calculate using weeks instead
-            self.end_date = (start_datetime + relativedelta(months=period_length)).date()
-        
-
-        super().save(*args, **kwargs)
-
-        # Create the Incomes and Expense for this Budget Period
-        costs = Amount.objects.filter(budget=self.budget)
-        for cost in costs:
-            Amount.objects.create_amount(cost, self)
-
-        return None
+            return super().save(*args, **kwargs)
 
     def is_ended(self):
         """
