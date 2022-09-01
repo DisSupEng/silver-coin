@@ -57,3 +57,20 @@ class AmountTests(Authenticate):
         self.amount.owner = None
         with self.assertRaisesMessage(ValidationError, "Amount must be linked to a User"):
             self.amount.full_clean()
+
+    def test_one_time_amount(self):
+        self.amount.is_one_time_cost = True
+        with self.assertRaisesMessage(ValidationError, "A one time amount must be linked to a Budget Period"):
+            self.amount.full_clean()
+
+        budget_period = BudgetPeriodFactory.create(budget=self.amount.budget)
+        # Create without raising a validation error
+        AmountFactory.create(
+            name="Gift",
+            amount=20.00,
+            is_one_time_cost = True,
+            budget_period=budget_period,
+            owner=self.user
+        )
+
+        

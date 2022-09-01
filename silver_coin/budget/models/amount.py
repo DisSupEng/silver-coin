@@ -40,6 +40,8 @@ class Amount(models.Model):
     amount_type = models.CharField(choices=AMOUNT_TYPES, null=False, blank=False, max_length=2, verbose_name="Type")
     # Is the amount model an actual amount (i.e the actual amount that has been spent)
     is_actual = models.BooleanField(null=False, editable=False, default=False)
+    # Is the amount a one time cost
+    is_one_time_cost = models.BooleanField(null=False, default=True)
     # The maximum number of digits including decimal places is 7
     amount = models.DecimalField(null=False, blank=False, max_digits=7, decimal_places=2)
     budget = models.ForeignKey("Budget", null=True, blank=True, default=None, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
@@ -56,6 +58,7 @@ class Amount(models.Model):
         An Amount must be linked to either a Budget or Budget Period but not both.
         Must be linked to an owner.
         Amount must be greater than zero
+        One time amounts can only be linked to a Budget Period
         """
         if self.budget is None and self.budget_period is None:
             raise ValidationError("An Amount must be linked to either a Budget or BudgetPeriod")
@@ -68,3 +71,5 @@ class Amount(models.Model):
 
         if self.amount <= 0:
             raise ValidationError("Amount must be greater than zero, mark as expense if outgoing cost")
+        if self.is_one_time_cost and self.budget is not None:
+            raise ValidationError("A one time amount must be linked to a Budget Period")
