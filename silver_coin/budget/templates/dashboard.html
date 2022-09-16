@@ -10,7 +10,7 @@
                 <div class="card-content">
                     <span class="card-title center">Dashboard</span>
                     {% if has_budget %}
-                        <p>Graph will go here</p>
+                        <p>Recent activity will go here</p>
                     {% else %}
                         <div class="row">
                             <div class="col s12">
@@ -18,7 +18,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <a href="{% url 'budgets' %}">
+                            <a href="#">
                                 <div class="col s12 waves-effect waves-light btn">
                                     Create Budget
                                 </div>
@@ -29,4 +29,23 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col s6">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title center">Budget History</span>
+                    <p>A graph of the budget history will go here.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col s6">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title center">Goals</span>
+                    <p>The user will be able to view their goals here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
