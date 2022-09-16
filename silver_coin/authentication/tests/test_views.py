@@ -67,6 +67,7 @@ class LoginTests(ClientSetup):
     def test_login_post(self):
         """
         A user should be able to login through a valid post.
+        TODO: Fix login post test, no user is actually created to login with
         """
         login_data = {
             "username": "testUser",
