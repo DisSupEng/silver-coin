@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.test.client import Client
 from django.urls import reverse
@@ -67,8 +68,11 @@ class LoginTests(ClientSetup):
     def test_login_post(self):
         """
         A user should be able to login through a valid post.
-        TODO: Fix login post test, no user is actually created to login with
         """
+        test_user = User.objects.create(username="testUser")
+        test_user.set_password("test12345")
+        test_user.save()
+
         login_data = {
             "username": "testUser",
             "password": "test12345"
@@ -76,4 +80,4 @@ class LoginTests(ClientSetup):
 
         response = self.client.post(reverse("login"), data=login_data)
 
-        self.assertEquals(response.status_code, 301)
+        self.assertEquals(response.status_code, 302)
