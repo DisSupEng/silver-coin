@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView, CreateView, UpdateView
+from django.views.generic import TemplateView, CreateView
 from django.urls import reverse
 
+from .forms import BudgetForm
 from .models import Budget
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -21,9 +22,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         """
         return reverse("login")
 
-class CreateBudgetView(LoginRequiredMixin, CreateView):
-    """
-    The view for creating a new budget.
-    """
-    template_name = "create_budget.html"
-    
+class BudgetCreateView(LoginRequiredMixin, CreateView):
+    template_name = "budget/new.html"
+    form_class = BudgetForm
+
