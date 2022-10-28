@@ -3,20 +3,12 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxLengthValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 
-from ..helpers import DAYS, WEEKS, MONTHS, YEARS
+from ..helpers import PERIOD_CHOICES
 
 class Budget(models.Model):
     """
     This model is the core of the project and what the other models will be based around.
     """
-
-    PERIOD_CHOICES = [
-        (DAYS, "Days"),
-        (WEEKS, "Weeks"),
-        (MONTHS, "Months"),
-        (YEARS, "Years"),
-    ]
-
     budget_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=25, validators=[MaxLengthValidator(25, "Name cannot be greater than 25 characters")], null=False, blank=False, verbose_name="Name")
     description = models.TextField(max_length=250, validators=[MaxLengthValidator(250, "Description cannot be greater than 250 characters")], null=False, blank=True, default="", verbose_name="Description")

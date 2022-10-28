@@ -4,14 +4,42 @@
 {% block title %}Create Budget{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col s12">
-            <div class="card">
-                <div class="card-content center">
-                    <span class="card-title">Create Budget</span>
-                    {{ form.as_p }}
+    <form action="create_budget" method="post">
+        <div class="row">
+            <div class="col s12">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title center">Create Budget</span>
+                        <div>
+                            <a href="{% url 'dashboard' %}" class="waves-effect waves-light btn">Cancel</a>
+                            <input type="submit" class="waves-effect waves-light btn right" value="Create Budget">
+                        </div>
+                        {{ form.as_p }}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="col s12">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">Incomes</span>
+                        <p>Please enter the estimated income details below</p>
+                        {{ incomes_form.as_p }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">Expenses</span>
+                        <p>Please enter the estimated expense details below</p>
+                        {{ expenses_form.as_p }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 {% endblock %}

@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms import inlineformset_factory
 from django.views.generic import TemplateView, CreateView
 from django.urls import reverse
 
 from .forms import BudgetForm
-from .models import Budget
+from .models import Budget, Amount
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard.html"
