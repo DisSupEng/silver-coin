@@ -3,8 +3,8 @@ from django.forms import inlineformset_factory
 from django.views.generic import TemplateView, CreateView
 from django.urls import reverse
 
-from .forms import BudgetForm
-from .models import Budget, Amount
+from ..forms import BudgetForm, AmountForm
+from ..models import Budget
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard.html"
@@ -23,7 +23,4 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         """
         return reverse("login")
 
-class BudgetCreateView(LoginRequiredMixin, CreateView):
-    template_name = "budget/new.html"
-    form_class = BudgetForm
 

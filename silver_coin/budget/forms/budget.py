@@ -1,8 +1,7 @@
 from django import forms
 
-from .helpers import PERIOD_CHOICES
-from .models import Budget
-
+from ..helpers import PERIOD_CHOICES
+from ..models import Budget
 
 class BudgetForm(forms.ModelForm):
     class Meta:
@@ -14,5 +13,3 @@ class BudgetForm(forms.ModelForm):
         choices=PERIOD_CHOICES,
         widget=forms.Select(attrs={"class": "browser-default"})
     )
-
-    
