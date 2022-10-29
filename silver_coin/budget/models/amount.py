@@ -39,6 +39,7 @@ class Amount(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False, verbose_name="Name")
     amount_type = models.CharField(choices=AMOUNT_TYPES, null=False, blank=False, max_length=2, verbose_name="Type")
     # Is the amount model an actual amount (i.e the actual amount that has been spent)
+    # We need this because a budget period copies the amounts from the current budget and creates a record for itself
     is_actual = models.BooleanField(null=False, editable=False, default=False)
     # Is the amount a one time cost
     is_one_time_cost = models.BooleanField(null=False, default=True)
