@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Budget{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title center">Create Budget Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }} - {{ wizard.steps.current }}</span>
+                    <form action="" method="POSR">
+                        <div class="row">
+                            <div class="col s6">
+                                {% if wizard.steps.prev %}
+                                    <input class="waves-effect waves-light btn" type="submit" value="{{ wizard.steps.prev }}"> 
+                                {% endif %}
+                            </div>
+                            <div class="col s6">
+                                {% if wizard.step1 = wizard.count %}
+                                    <input class="waves-effect waves-light btn right" type="submit" value="Finish">
+                                {% else %}
+                                    <input class="waves-effect waves-light btn right" type="submit" value="Next">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12">
+                                {{ wizard.management_form }}
+                                {% if wizard.form.forms %}
+                                    {{ wizard.form.management_form }}
+                                    {% for form in wizard.forms.form %}
+                                        {{ form.as_p }}
+                                    {% endfor %}
+                                {% else %}
+                                    {{ wizard.form }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

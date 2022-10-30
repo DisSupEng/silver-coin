@@ -1,16 +1,18 @@
+from django.forms import modelformset_factory
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from formtools.wizard.views import SessionWizardView
 
-from ..models import Budget
+from ..models import Budget, Amount
 from ..forms import AmountForm, BudgetForm
 
 class BudgetWizard(SessionWizardView):
     form_list = [
-        ("budget", BudgetForm),
-        ("incomes", AmountForm),
-        ("expenses", AmountForm)
+        ("Budget", BudgetForm),
+        ("Incomes", modelformset_factory(Amount, form=AmountForm, min_num=1, validate_min=True)),
+        ("Expenses", modelformset_factory(Amount, form=AmountForm, min_num=1, validate_min=True))
     ]
+    template_name = "budget/policy_wizard.html"
 
     def done(self, form_list, form_dict, **kwargs):
         processed_budget_form: BudgetForm = self.processed_budget_form(form_dict["budget"])
