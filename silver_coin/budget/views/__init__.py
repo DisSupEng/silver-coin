@@ -1,2 +1,2 @@
 from .dashboard import DashboardView
-from .budget_wizard import BudgetWizard
+from .budget import CreateBudget

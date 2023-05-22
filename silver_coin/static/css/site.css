@@ -5,3 +5,7 @@ body {
 div.card-container {
     margin-top: 10%;
 }
+
+p.error {
+    color: red;
+}
