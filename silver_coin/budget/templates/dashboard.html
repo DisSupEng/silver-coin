@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block title %}Welcome{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/initialise_select.js' %}"></script>
+{% endblock %}
 
 {% block content %}
     <div class="row">
@@ -18,13 +21,42 @@
                             </div>
                         </div>
                         <div class="row">
-                            <a href="{% url 'budget_wizard' %}">
+                            <a href="{% url 'create_budget' %}">
                                 <div class="col s12 waves-effect waves-light btn">
                                     Create Budget
                                 </div>
                             </a>
                         </div>
                     {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title center">Budget Actions</span>
+                    <div class="row">
+                        <div class="col s12 input-field">
+                            <select>
+                                <optgroup label="Budget Actions">
+                                    <option>Edit Budget Details</option>
+                                    <option>Delete Budget</option>
+                                </optgroup>
+                                <optgroup label="Amount Actions">
+                                    <option>Add Amount</option>
+                                    <option>Edit Amount</option>
+                                    <option>Delete Amount</option>
+                                </optgroup>
+                                <optgroup label="Actual Amount Actions">
+                                    <option>Add Actual Amount</option>
+                                    <option>Edit Actual Amount</option>
+                                    <option>Delete Actual Amount</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
