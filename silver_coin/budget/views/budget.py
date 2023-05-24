@@ -1,10 +1,10 @@
-from typing import Any, Optional
 from django.core.exceptions import ValidationError
-from django.db import models
 from django.urls import reverse_lazy
-from django.views.generic import FormView, DetailView
+from django.views.generic import FormView
+from django.views.generic import UpdateView
 
 from budget.forms import BudgetForm
+from budget.forms import BudgetModelForm
 from budget.models import Budget
 
 class CreateBudget(FormView):
@@ -16,6 +16,8 @@ class CreateBudget(FormView):
     form_class = BudgetForm
     template_name = "budget/budget_form.html"
     success_url = reverse_lazy("dashboard")
+    extra_context = {"action": "Create"}
+
 
     def post(self, request, *args, **kwargs):
         owner = request.user
@@ -33,12 +35,14 @@ class CreateBudget(FormView):
         else:
             return self.form_invalid(form)
 
-class EditBudget(DetailView):
+class EditBudget(UpdateView):
     """
     A view for editing the Budget instance.
     """
-    model = Budget
+    form_class = BudgetModelForm
     template_name = "budget/budget_form.html"
+    success_url = reverse_lazy("dashboard")
+    extra_context = {"action": "Edit"}
 
     def get_queryset(self):
         """
