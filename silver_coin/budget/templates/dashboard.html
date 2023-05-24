@@ -4,6 +4,15 @@
 {% block title %}Welcome{% endblock %}
 {% block extra_js %}
     <script src="{% static 'js/initialise_select.js' %}"></script>
+    <script>
+        /**
+         * A function that navigates to the given url on select change.
+         */
+        function selectUrl() {
+            const url = document.getElementById("action_select").value;
+            document.location.href = url;
+        }
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -39,9 +48,10 @@
                     <span class="card-title center">Budget Actions</span>
                     <div class="row">
                         <div class="col s12 input-field">
-                            <select>
+                            <select id="action_select" onchange="selectUrl()">
+                                <option selected disabled>Please select an action</option>
                                 <optgroup label="Budget Actions">
-                                    <option>Edit Budget Details</option>
+                                    <option value="{% url 'edit_budget' %}">Edit Budget Details</option></a>
                                     <option>Delete Budget</option>
                                 </optgroup>
                                 <optgroup label="Amount Actions">
