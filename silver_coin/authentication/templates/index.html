@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col s4 offset-s4">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title center">Silver Coin</span>
+                <p>
+                    Welcome to Silver Coin, our goal is to help people achieve their financial goals by
+                    providing a budgeting system that shows users exactly how they spend their money.
+                    <br>
+                    <br>
+                    Create a budget that you wish to achieve then log how much you actually spend compared to
+                    what you budgeted. At the end of the budget period you will get a report showing these comparisons.
+                    <br>
+                    <br>
+                    Silver Coin allows you to see how well you stick to your budget over time by graphing the
+                    estimated data against the actual data you enter.
+                    <br>
+                    <br>
+                    If you have an account please login or signup using the buttons below.
+                </p>
+            </div>
+            <div class="card-action">
+                <div class="row">
+                    <div class="col s6">
+                        <a class="waves-effect waves-light btn" href="{% url 'signup' %}">Sign Up</a>
+                    </div>
+                    <div class="col s6">
+                        <a class="waves-effect waves-light btn right" href="{% url 'login' %}">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
