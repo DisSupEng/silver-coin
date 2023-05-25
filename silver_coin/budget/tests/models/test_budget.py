@@ -76,7 +76,7 @@ class BudgetTests(Authenticate):
             owner=self.user
         )
 
-        expenses = self.budget.amount_set.filter(amount_type="EX")
+        expenses = self.budget.amounts.filter(amount_type="EX")
         self.assertEquals(expenses.count(), 2)
 
     def test_get_incomes(self):
@@ -102,5 +102,5 @@ class BudgetTests(Authenticate):
             owner=self.user
         )
 
-        income = self.budget.amount_set.filter(amount_type="IN")
+        income = self.budget.amounts.filter(amount_type="IN")
         self.assertEquals(income.count(), 1)

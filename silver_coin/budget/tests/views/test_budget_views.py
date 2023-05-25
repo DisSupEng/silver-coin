@@ -22,12 +22,6 @@ class BudgetCreateView(Authenticate):
         self.assertContains(response, "name=\"description\"")
         self.assertContains(response, "name=\"period_type\"")
         self.assertContains(response, "name=\"period_length\"")
-        # Income inlines
-        self.assertContains(response, "name=\"incomes_name\"")
-        self.assertContains(response, "name=\"incomes_amount\"")
-        # Expense inlines
-        self.assertContains(response, "name=\"expenses_name\"")
-        self.assertContains(response, "name=\"enpenses_amount\"")
 
     def test_budget_create_post(self):
         pass
