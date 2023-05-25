@@ -74,7 +74,7 @@ class LoginTests(ClientSetup):
         # Test that the user is redirected
         response = self.client.get(reverse("login"))
         self.assertEquals(response.status_code, 302)
-        self.assertRedirects(response, "/dashboard")
+        self.assertRedirects(response, reverse("dashboard"))
 
     def test_login_post(self):
         """
