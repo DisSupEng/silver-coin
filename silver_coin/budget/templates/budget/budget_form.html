@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Create Budget{% endblock %}
+{% block title %}{{ action }} Budget{% endblock %}
 
 {% block content %}
     <div class="row">
@@ -13,7 +13,11 @@
                     {% if form.non_field_errors %}
                         {{ form.non_field_errors }}
                     {% endif %}
+                    {% if action == "create" %}
                     <form action="{% url 'create_budget' %}" method="post">
+                    {% else %}
+                    <form action="{% url 'edit_budget' %}" method="post">
+                    {% endif %}
                         {% csrf_token %}
                         <div class="row">
                             <div class="col s12">
