@@ -20,5 +20,5 @@ class BudgetModelForm(forms.ModelForm):
 
     period_type = forms.ChoiceField(
         choices=PERIOD_CHOICES,
-        widget=forms.Select(attrs={"class": "browser-default"})
+        widget=forms.Select()
     )

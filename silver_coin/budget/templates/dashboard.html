@@ -31,7 +31,7 @@
                         </div>
                         <div class="row">
                             <a href="{% url 'create_budget' %}">
-                                <div class="col s12 waves-effect waves-light btn">
+                                <div class="col s12 waves-effect waves-light btn blue">
                                     Create Budget
                                 </div>
                             </a>
@@ -52,7 +52,7 @@
                                 <option selected disabled>Please select an action</option>
                                 <optgroup label="Budget Actions">
                                     <option value="{% url 'edit_budget' %}">Edit Budget Details</option></a>
-                                    <option>Delete Budget</option>
+                                    <option value="{% url 'delete_budget' %}">Delete Budget</option>
                                 </optgroup>
                                 <optgroup label="Amount Actions">
                                     <option>Add Amount</option>

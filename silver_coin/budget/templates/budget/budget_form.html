@@ -2,6 +2,18 @@
 {% load static %}
 
 {% block title %}{{ action }} Budget{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/initialise_select.js' %}"></script>
+    <script>
+        /**
+         * A function that navigates to the given url on select change.
+         */
+        function selectUrl() {
+            const url = document.getElementById("action_select").value;
+            document.location.href = url;
+        }
+    </script>
+{% endblock %}
 
 {% block content %}
     <div class="row">
@@ -13,7 +25,7 @@
                     {% if form.non_field_errors %}
                         {{ form.non_field_errors }}
                     {% endif %}
-                    {% if action == "create" %}
+                    {% if action == "Create" %}
                     <form action="{% url 'create_budget' %}" method="post">
                     {% else %}
                     <form action="{% url 'edit_budget' %}" method="post">
@@ -50,14 +62,14 @@
                         <div class="row">
                             <div class="col s4">
                             <a href="{% url 'dashboard' %}">
-                                <div class="waves-effect waves-light btn">
+                                <div class="waves-effect waves-light btn blue">
                                     Back
                                 </div>
                             </a>
                             </div>
                             <div class="col s4"></div>
                             <div class="col s4">
-                                <button class="waves-effect waves-light btn right" type="submit">{{ action }} Budget</button>
+                                <button class="waves-effect waves-light btn right blue" type="submit">{{ action }} Budget</button>
                             </div>
                         </div>
                     </form>

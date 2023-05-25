@@ -1,9 +1,8 @@
 from django.core.exceptions import ValidationError
-from django.forms.models import BaseModelForm
-from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import FormView
 from django.views.generic import UpdateView
+from django.views.generic import DeleteView
 
 from budget.forms import BudgetForm
 from budget.forms import BudgetModelForm
@@ -36,16 +35,11 @@ class CreateBudget(FormView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
-class EditBudget(UpdateView):
+        
+class UserMixin:
     """
-    A view for editing the Budget instance.
+    A mixin to get the budget for the logged in user.
     """
-    form_class = BudgetModelForm
-    template_name = "budget/budget_form.html"
-    success_url = reverse_lazy("dashboard")
-    extra_context = {"action": "Edit"}
-
     def get_queryset(self):
         """
         Override to filter by the owner.
@@ -54,4 +48,25 @@ class EditBudget(UpdateView):
         return queryset
     
     def get_object(self):
+        """
+        Return the user's budget.
+        """
         return self.get_queryset().first()
+
+class EditBudget(UserMixin, UpdateView):
+    """
+    A view for editing the Budget instance.
+    """
+    form_class = BudgetModelForm
+    template_name = "budget/budget_form.html"
+    success_url = reverse_lazy("dashboard")
+    extra_context = {"action": "Edit"}
+
+    
+    
+class DeleteBudget(UserMixin, DeleteView):
+    """
+    A view for deleting the user's budget.
+    """
+    template_name = "budget/budget_delete.html"
+    success_url = reverse_lazy("dashboard")
