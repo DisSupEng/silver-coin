@@ -9,5 +9,3 @@ class BudgetFactory(DjangoModelFactory):
     description = "This is a mock budget for testing"
     period_type = "months"
     period_length = 1
-    # TODO: Implement owner factory
-    owner = None
