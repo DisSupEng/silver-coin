@@ -55,15 +55,26 @@ class LoginTests(ClientSetup):
     """
     The tests for the login page
     """
-    def test_response(self):
+    def test_login_get_not_loggedd_in(self):
         """
-        A user should be able to view the login page.
-        """
+        A user should be able to view the login page if they are not logged in.
+        """      
         response = self.client.get(reverse("login"))
 
         self.assertEquals(response.status_code, 200)
         self.assertContains(response, "Username")
         self.assertContains(response, "Password")
+
+    def test_login_get_logged_in(self):
+        user = User.objects.create(username="testUser")
+        user.set_password("test123")
+        user.save()
+        # Make it seem like a user is logged in
+        self.client.force_login(user=user)
+        # Test that the user is redirected
+        response = self.client.get(reverse("login"))
+        self.assertEquals(response.status_code, 302)
+        self.assertRedirects(response, "/dashboard")
 
     def test_login_post(self):
         """
