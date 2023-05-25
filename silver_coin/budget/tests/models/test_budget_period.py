@@ -16,21 +16,18 @@ class BudgetPeriodTests(Authenticate):
             amount_type="IN",
             amount=300,
             budget=self.budget,
-            owner=self.user
         )
         AmountFactory.create(
             name="Food",
             amount_type="EX",
             amount=100,
             budget=self.budget,
-            owner=self.user
         )
         AmountFactory.create(
             name="Power",
             amount_type="EX",
             amount=100,
             budget=self.budget,
-            owner=self.user
         )
 
         self.budget_period = BudgetPeriodFactory.create(budget=self.budget)

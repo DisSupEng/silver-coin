@@ -20,7 +20,6 @@ class AmountManager(models.Manager):
             is_actual=is_actual,
             amount=0 if is_actual else amount.amount,
             budget_period=period,
-            owner=period.budget.owner
         )
 
 class Amount(models.Model):
@@ -55,7 +54,6 @@ class Amount(models.Model):
     def clean(self):
         """
         An Amount must be linked to either a Budget or Budget Period but not both.
-        Must be linked to an owner.
         Amount must be greater than zero
         One time amounts can only be linked to a Budget Period
         """
@@ -63,10 +61,6 @@ class Amount(models.Model):
             raise ValidationError("An Amount must be linked to either a Budget or BudgetPeriod")
         elif self.budget is not None and self.budget_period is not None:
             raise ValidationError("An Amount cannot be linked to both a Budget and BudgetPeriod")
-        try:
-            self.owner
-        except User.DoesNotExist:
-            raise ValidationError("Amount must be linked to a User")
 
         if self.amount <= 0:
             raise ValidationError("Amount must be greater than zero, mark as expense if outgoing cost")

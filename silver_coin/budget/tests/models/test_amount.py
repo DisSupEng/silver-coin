@@ -16,7 +16,7 @@ class AmountTests(Authenticate):
         super().setUp()
         budget = BudgetFactory.create(owner=self.user)
         
-        self.amount = AmountFactory.create(budget=budget, owner=self.user)
+        self.amount = AmountFactory.create(budget=budget)
 
 
     def test_name_blank(self):
@@ -53,11 +53,6 @@ class AmountTests(Authenticate):
         with self.assertRaisesMessage(ValidationError, "An Amount cannot be linked to both a Budget and BudgetPeriod"):
             self.amount.full_clean()
 
-    def test_no_owner(self):
-        self.amount.owner = None
-        with self.assertRaisesMessage(ValidationError, "Amount must be linked to a User"):
-            self.amount.full_clean()
-
     def test_one_time_amount(self):
         self.amount.is_one_time_cost = True
         with self.assertRaisesMessage(ValidationError, "A one time amount must be linked to a Budget Period"):
@@ -70,7 +65,6 @@ class AmountTests(Authenticate):
             amount=20.00,
             is_one_time_cost = True,
             budget_period=budget_period,
-            owner=self.user
         )
 
         

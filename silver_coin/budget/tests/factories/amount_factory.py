@@ -14,4 +14,3 @@ class AmountFactory(DjangoModelFactory):
     # These fields are set in the tests
     budget = None
     budget_period = None
-    owner = None
