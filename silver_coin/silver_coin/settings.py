@@ -31,6 +31,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# The Login redirect URL
+LOGIN_REDIRECT_URL = "dashboard"
 
 # Application definition
 
@@ -42,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "authentication",
-    "budget"
+    "budget",
+    "formtools",
 ]
 
 MIDDLEWARE = [

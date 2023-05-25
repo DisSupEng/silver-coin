@@ -39,15 +39,14 @@ class Amount(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False, verbose_name="Name")
     amount_type = models.CharField(choices=AMOUNT_TYPES, null=False, blank=False, max_length=2, verbose_name="Type")
     # Is the amount model an actual amount (i.e the actual amount that has been spent)
+    # We need this because a budget period copies the amounts from the current budget and creates a record for itself
     is_actual = models.BooleanField(null=False, editable=False, default=False)
     # Is the amount a one time cost
     is_one_time_cost = models.BooleanField(null=False, default=True)
     # The maximum number of digits including decimal places is 7
     amount = models.DecimalField(null=False, blank=False, max_digits=7, decimal_places=2)
-    budget = models.ForeignKey("Budget", null=True, blank=True, default=None, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
+    budget = models.ForeignKey("Budget", null=True, blank=True, default=None, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget", related_name="amounts")
     budget_period = models.ForeignKey("BudgetPeriod", null=True, blank=True, default=None, db_column="budget_period", on_delete=models.CASCADE, verbose_name="Budget Period")
-    # An Amount should be linked to the User
-    owner = models.ForeignKey(User, null=False, blank=True, editable=False, db_column="owner", on_delete=models.CASCADE)
 
     # Define the model manager
     objects = AmountManager()
