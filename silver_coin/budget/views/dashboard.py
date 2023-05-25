@@ -2,7 +2,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.urls import reverse
 
-from ..forms import BudgetForm, AmountForm
 from ..models import Budget
 
 class DashboardView(LoginRequiredMixin, TemplateView):

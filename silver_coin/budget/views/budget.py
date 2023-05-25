@@ -1,5 +1,6 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
 from django.views.generic import UpdateView
 from django.views.generic import DeleteView
@@ -8,7 +9,7 @@ from budget.forms import BudgetForm
 from budget.forms import BudgetModelForm
 from budget.models import Budget
 
-class CreateBudget(FormView):
+class CreateBudget(LoginRequiredMixin, FormView):
     """
     A FormView that is used to create a budget. This needs to be a FormView because we need to add the logged in user as the owner.
     A ModelForm will not work because the form will not be valid without an owner and adding the owner to get_form_kwargs cannot be done as it is immutable.
@@ -19,6 +20,8 @@ class CreateBudget(FormView):
     success_url = reverse_lazy("dashboard")
     extra_context = {"action": "Create"}
 
+    def get_login_url(self):
+        return reverse("login")
 
     def post(self, request, *args, **kwargs):
         owner = request.user
@@ -36,10 +39,13 @@ class CreateBudget(FormView):
         else:
             return self.form_invalid(form)
         
-class UserMixin:
+class UserMixin(LoginRequiredMixin):
     """
     A mixin to get the budget for the logged in user.
     """
+    def get_login_url(self):
+        return reverse("login")
+
     def get_queryset(self):
         """
         Override to filter by the owner.

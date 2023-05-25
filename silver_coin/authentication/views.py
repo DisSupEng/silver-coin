@@ -1,8 +1,21 @@
 from django.contrib.auth.hashers import make_password
-from django.views.generic import TemplateView, FormView
+from django.contrib.auth.views import LoginView
+from django.http import HttpResponseRedirect
+from django.views.generic import FormView
+from django.views.generic import TemplateView
 from django.urls import reverse
 
 from .forms import SignupForm
+
+class CustomLoginView(LoginView):
+    """
+    A class that is used to redirect users if they are already logged in
+    """
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("dashboard"))
+        else:
+            return super().get(request, *args, **kwargs)
 
 class SignUpView(FormView):
     template_name = "signup.html"
