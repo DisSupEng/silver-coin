@@ -47,8 +47,6 @@ class Amount(models.Model):
     amount = models.DecimalField(null=False, blank=False, max_digits=7, decimal_places=2)
     budget = models.ForeignKey("Budget", null=True, blank=True, default=None, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget", related_name="amounts")
     budget_period = models.ForeignKey("BudgetPeriod", null=True, blank=True, default=None, db_column="budget_period", on_delete=models.CASCADE, verbose_name="Budget Period")
-    # An Amount should be linked to the User
-    owner = models.ForeignKey(User, null=False, blank=True, editable=False, db_column="owner", on_delete=models.CASCADE)
 
     # Define the model manager
     objects = AmountManager()
