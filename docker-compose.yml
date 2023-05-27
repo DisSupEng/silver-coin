@@ -28,7 +28,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     command: "python manage.py runserver 0.0.0.0:8000"
-    # App depends on the 
+    # App depends on the database
     depends_on:
       - db
 volumes:
