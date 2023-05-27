@@ -9,7 +9,7 @@ COPY . /src
 WORKDIR /src
 
 # Update pip
-RUN pip install -U pip setuptools psycopg2
+RUN pip install -U pip setuptools
 # Install packages
 RUN pip install -r ./requirements.txt
 
