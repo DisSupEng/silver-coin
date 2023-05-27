@@ -34,6 +34,11 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+                        <div class="row">
+                            <div class="col s12">
+                                <h5 class="right">Total Income: {{ total_income }}</h5>
+                            </div>
+                        </div>
                     {% else %}
                         <p class="center">No Incomes to display!</p>
                     {% endif %}
@@ -75,6 +80,11 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    <div class="row">
+                        <div class="col s12">
+                            <h5>Total Expense: {{ total_expense }}</h5>
+                        </div>
+                    </div>
                     {% else %}
                         <p class="center">No Expenses to display!</p>
                     {% endif %}

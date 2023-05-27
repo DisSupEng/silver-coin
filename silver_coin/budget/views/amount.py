@@ -35,8 +35,16 @@ class AmountList(LoginRequiredMixin, ListView):
         """
         amounts = self.get_queryset()
         incomes = amounts.filter(amount_type="IN")
+        total_income = sum([income.amount for income in incomes])
         expenses = amounts.filter(amount_type="EX")
-        return super().get_context_data(**kwargs, incomes=incomes, expenses=expenses)
+        total_expense = sum([expense.amount for expense in expenses])
+        return super().get_context_data(
+            **kwargs, 
+            incomes=incomes, 
+            expenses=expenses, 
+            total_income=total_income, 
+            total_expense=total_expense
+        )
     
 class CreateIncome(LoginRequiredMixin, FormView):
     """
