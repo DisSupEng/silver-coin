@@ -54,7 +54,7 @@
                                     <option value="{% url 'edit_budget' %}">Edit Budget Details</option></a>
                                     <option value="{% url 'delete_budget' %}">Delete Budget</option>
                                 </optgroup>
-                                <option value="{% url 'amounts' %}" {% if has_budget is False %}disabled{% endif %}>View Amounts</option>
+                                <option value="{% url 'amount' %}" {% if has_budget is False %}disabled{% endif %}>View Amounts</option>
                                 <optgroup label="Actual Amount Actions">
                                     <option>Add Actual Amount</option>
                                     <option>Edit Actual Amount</option>
