@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:12
+    restart: always
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    container_name: "budget_db"
+    volumes:
+      - app_db:/var/postgres
+    ports:
+      - 5432:5432
+  app:
+    image: "budget"
+    restart: always
+    build: .
+    container_name: "budget_app"
+    volumes:
+      # A binding mount for the source code
+      - .:/src
+    # Open the ports in the container so the app can be accessed over localhost
+    ports:
+      - 8000:8000
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    command: "python manage.py runserver 0.0.0.0:8000"
+    # App depends on the 
+    depends_on:
+      - db
+volumes:
+  app_db:
