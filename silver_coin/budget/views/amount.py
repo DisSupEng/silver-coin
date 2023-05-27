@@ -1,11 +1,20 @@
+from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
-from django.urls import reverse
+from django.views.generic import FormView
+from django.views.generic import UpdateView
+from django.views.generic import DeleteView
+from django.urls import reverse, reverse_lazy
 
+from ..forms import AmountForm
+from ..forms import IncomeForm
 from ..models import Budget
 from ..models import Amount
 
 class AmountList(LoginRequiredMixin, ListView):
+    """
+    Displays the Incomes and Expenses.
+    """
     model = Amount
     template_name = "amount/amount_list.html"
     context_object_name = "amounts"
@@ -28,3 +37,81 @@ class AmountList(LoginRequiredMixin, ListView):
         incomes = amounts.filter(amount_type="IN")
         expenses = amounts.filter(amount_type="EX")
         return super().get_context_data(**kwargs, incomes=incomes, expenses=expenses)
+    
+class CreateIncome(LoginRequiredMixin, FormView):
+    """
+    A view for creating Incomes
+    """
+    form_class = AmountForm
+    success_url = reverse_lazy("amount")
+    template_name = "amount/amount_form.html"
+    extra_context = {"action": "Create", "type": "Income"}
+
+    def get_login_url(self):
+        return reverse("login")
+    
+    def post(self, request, *args, **kwargs):
+        """
+        Override to add extra fields to the model.
+        """
+        budget = Budget.objects.get(owner=request.user)
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            amount = Amount(
+                **form.cleaned_data,
+                amount_type="IN",
+                is_actual=False,
+                is_one_time_cost=False,
+                budget=budget
+            )
+            try:
+                amount.full_clean()
+            except ValidationError as error:
+                form.add_error(error=error.message)
+                return self.form_invalid(form)
+            amount.save()
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+        
+class EditIncome(LoginRequiredMixin, UpdateView):
+    """
+    A view for editing an income.
+    """
+    model = Amount
+    form_class = IncomeForm
+    success_url = reverse_lazy("amount")
+    template_name = "amount/amount_form.html"
+    extra_context = {"action": "Edit", "type": "Income"}
+
+    def get_queryset(self):
+        """
+        Get the queryset for the Budget's incomes.
+        """
+        budget = Budget.objects.get(owner=self.request.user)
+        incomes = Amount.objects.filter(amount_type="IN", budget=budget)
+        return incomes
+
+    def get_login_url(self):
+        return reverse("login")
+
+class DeleteIncome(LoginRequiredMixin, DeleteView):
+    """"
+    A view for deleting an income.
+    """
+    model = Amount
+    success_url = reverse_lazy("amount")
+    template_name = "amount/amount_delete.html"
+    extra_context = {"type": "Income"}
+    
+    def get_queryset(self):
+        """
+        Get the queryset for the Budget's incomes.
+        """
+        budget = Budget.objects.get(owner=self.request.user)
+        incomes = Amount.objects.filter(amount_type="IN", budget=budget)
+        return incomes
+
+    def get_login_url(self):
+        return reverse("login")
