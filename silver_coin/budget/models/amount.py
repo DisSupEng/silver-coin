@@ -64,3 +64,13 @@ class Amount(models.Model):
             raise ValidationError("Amount must be greater than zero, mark as expense if outgoing cost")
         if self.is_one_time_cost and self.budget is not None:
             raise ValidationError("A one time amount must be linked to a Budget Period")
+        
+    @property
+    def income_percentage(self):
+        """
+        Returns the percentage of the income the amount is rounded to 2dp.
+        """
+        income = self.budget.total_income()
+        percentage = (self.amount / income) * 100
+
+        return "{:0.2f}".format(percentage)

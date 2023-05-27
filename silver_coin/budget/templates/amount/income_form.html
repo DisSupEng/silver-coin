@@ -13,14 +13,14 @@
                         {{ form.non_field_errors }}
                     {% endif %}
                     {% if action == "Create" %}
-                    <form action="{% url 'create_amount' %}" method="post">
+                    <form action="{% url 'create_income' %}" method="post">
                     {% else %}
-                    <form action="{% url 'edit_amount' pk=amount.amount_id %}" method="post">
+                    <form action="{% url 'edit_income' pk=amount.amount_id %}" method="post">
                     {% endif %}
                         {% csrf_token %}
                         <div class="row">
                             <div class="col s12">
-                                <label for="{{ form.name.id_for_label }}">Income Name</label>
+                                <label for="{{ form.name.id_for_label }}">{{ type }} Name</label>
                                 <ul>
                                     {{ form.name.errors }}
                                 </ul>
@@ -29,7 +29,7 @@
                         </div>
                         <div class="row">
                             <div class="col s12">
-                                <label for="{{ form.amount.id_for_label }}">Income Amount</label>
+                                <label for="{{ form.amount.id_for_label }}">{{ type }} Amount</label>
                                 <ul>
                                     {{ form.amount.errors }}
                                 </ul>
