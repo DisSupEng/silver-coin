@@ -40,3 +40,9 @@ class Budget(models.Model):
         Returns the total expense.
         """
         return sum([expense.amount for expense in self.amounts.filter(amount_type="EX")])
+    
+    def net_amount(self):
+        """
+        The estimated NET amount of the budget.
+        """
+        return self.total_income() - self.total_expense()

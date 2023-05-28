@@ -43,7 +43,8 @@ class AmountList(LoginRequiredMixin, ListView):
             incomes=incomes, 
             expenses=expenses, 
             total_income=total_income, 
-            total_expense=total_expense
+            total_expense=total_expense,
+            net_amount=Budget.objects.get(owner=self.request.user).net_amount()
         )
     
 class CreateIncome(LoginRequiredMixin, FormView):

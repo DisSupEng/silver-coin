@@ -19,6 +19,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Amount</th>
+                                    <th>% of income</th>
                                     <th></th>
                                     <th></th>
                                 </tr>
@@ -28,6 +29,7 @@
                                     <tr>
                                         <th>{{ income.name }}</th>
                                         <th>${{ income.amount }}</th>
+                                        <th>{{ income.income_percentage }}%</th>
                                         <th><a href="{% url 'edit_income' pk=income.amount_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
                                         <th><a href="{% url 'delete_income' pk=income.amount_id %}" class="waves-effect waves-light btn red">Delete</a></th>
                                     </tr>
@@ -90,6 +92,16 @@
                     {% else %}
                         <p class="center">No Expenses to display!</p>
                     {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title center">NET Amount: <span {% if net_amount > 0 %}class="positive_net"{% else %}class="positive_net"{% endif %}>${{ net_amount }}</span></span>
                 </div>
             </div>
         </div>

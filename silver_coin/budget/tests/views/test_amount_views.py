@@ -41,6 +41,12 @@ class AmountViewTests(Authenticate):
         self.assertEquals(200, response.status_code)
         self.assertContains(response, "Create Income")
 
+    def test_income_create_post(self):
+        """
+        Tests that the user can post and create an income.
+        """
+        pass
+
     def test_income_edit_redirect_unauthorised(self):
         """
         Tests that the user is redirected to the login screen on 'edit_income` if they are not authorised.
@@ -86,6 +92,12 @@ class AmountViewTests(Authenticate):
         response = self.client.get(reverse("edit_income", kwargs={"pk": test_amount.amount_id}))
         self.assertEquals(response.status_code, 200)
         self.assertContains(response, "Edit Income")
+
+    def test_income_edit_post(self):
+        """
+        Tests that the user can post to edit an income
+        """
+        pass
 
     def test_income_delete_redirect_unauthorised(self):
         """
