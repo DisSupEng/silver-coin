@@ -64,9 +64,9 @@ class AmountViewTests(Authenticate):
 
     def test_income_edit_redirect_not_owner(self):
         """
-        Tests that the user is redirected to the dashboard if they try to edit an income that is not theirs.
+        Tests that the user recieves a 404 response if they try to access an amount that is not theirs
         """
-        self.client.login(username="testUser2", password="test1234")
+        self.client.login(username="testUser2", password="test123")
 
         test_amount = AmountFactory.create(
             name="Work",
@@ -75,7 +75,7 @@ class AmountViewTests(Authenticate):
         )
 
         response = self.client.get(reverse("edit_income", kwargs={"pk": test_amount.amount_id}))
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, 404)
 
     def test_income_edit_get(self):
         """

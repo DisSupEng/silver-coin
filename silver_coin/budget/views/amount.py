@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseNotFound
 from django.views.generic import ListView
 from django.views.generic import FormView
 from django.views.generic import UpdateView
@@ -93,6 +94,20 @@ class EditIncome(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("amount")
     template_name = "amount/income_form.html"
     extra_context = {"action": "Edit", "type": "Income"}
+
+    def get(self, request, *args, **kwargs):
+        """
+        Make sure the user owns this amount before proceeding.
+        """
+        try:
+            amount = Amount.objects.get(pk=request.GET.get("pk"))
+            # If the user does not own the amount return a not found
+            if amount.budget.owner != request.user:
+                return HttpResponseNotFound()
+        except Amount.DoesNotExist:
+            return HttpResponseNotFound()
+        # The user is the owner
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         """
