@@ -147,11 +147,11 @@ class AmountViewTests(Authenticate):
 
         # Test the get request on the delete_income view
         response = self.client.get(reverse("delete_income", kwargs={"pk": test_income.amount_id}))
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 302)
 
         # Test the get request on the delete_income view
         response = self.client.post(reverse("delete_income", kwargs={"pk": test_income.amount_id}))
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 302)
 
 
     def test_income_delete_redirect_not_owner(self):
@@ -186,7 +186,7 @@ class AmountViewTests(Authenticate):
 
         # Test the get request on the create_expense view
         response = self.client.get(reverse("create_expense"))
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 302)
 
         # Test the post request on the create_expense view
         response = self.client.post(
@@ -196,7 +196,7 @@ class AmountViewTests(Authenticate):
                 "amount": 66.50
             }
         )
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 302)
 
     def test_expense_edit_redirect_unauthorised(self):
         """
@@ -210,7 +210,7 @@ class AmountViewTests(Authenticate):
 
         # Test the get request on an edit_expense view
         response = self.client.get(reverse("edit_expense", kwargs={"pk": test_expense.amount_id}))
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 302)
 
         # Test the post request on an edit_expense view
         response = self.client.post(
@@ -220,7 +220,7 @@ class AmountViewTests(Authenticate):
                 "amount": 75
             }
         )
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 302)
 
     def test_expense_edit_redirect_not_owner(self):
         """
@@ -254,11 +254,11 @@ class AmountViewTests(Authenticate):
 
         # Test the get request on the delete_expense view
         response = self.client.get(reverse("delete_expense"), kwargs={"pk": test_expense.amount_id})
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 302)
 
         # Test the post request on the delete_expense view
         response = self.client.post(reverse("delete_expense"), kwargs={"pk": test_expense.amount_id})
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 302)
 
     def test_expense_delete_redirect_not_owner(self):
         """
