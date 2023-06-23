@@ -6,6 +6,8 @@ from ..helpers import Authenticate
 from ..factories import BudgetFactory
 from ..factories import AmountFactory
 
+from ...models import Amount
+
 
 class AmountViewTests(Authenticate):
     """
@@ -45,20 +47,35 @@ class AmountViewTests(Authenticate):
         """
         Tests that the user can post and create an income.
         """
-        pass
+        self.client.login(username="testUser", password="test123")
+
+        response = self.client.post(
+            reverse("create_income"),
+            data={
+                "name": "New Income",
+                "amount": 78.75
+            },
+        )
+        self.assertEquals(response.status_code, 302)
+
+        test_income = Amount.objects.last()
+        self.assertEquals(test_income.name, "New Income")
+        self.assertEquals(test_income.amount, 78.75)
+    
+
 
     def test_income_edit_redirect_unauthorised(self):
         """
         Tests that the user is redirected to the login screen on 'edit_income` if they are not authorised.
         """
         # Create a test amount
-        test_amount = AmountFactory.create(
+        test_income = AmountFactory.create(
             name="Work",
             budget=self.budget,
             amount_type="IN"
         )
 
-        response = self.client.get(reverse("edit_income", kwargs={"pk": test_amount.amount_id}))
+        response = self.client.get(reverse("edit_income", kwargs={"pk": test_income.amount_id}))
         self.assertEquals(response.status_code, 302)
 
 
@@ -68,13 +85,13 @@ class AmountViewTests(Authenticate):
         """
         self.client.login(username="testUser2", password="test123")
 
-        test_amount = AmountFactory.create(
+        test_income = AmountFactory.create(
             name="Work",
             budget=self.budget,
             amount_type="IN"
         )
 
-        response = self.client.get(reverse("edit_income", kwargs={"pk": test_amount.amount_id}))
+        response = self.client.get(reverse("edit_income", kwargs={"pk": test_income.amount_id}))
         self.assertEquals(response.status_code, 404)
 
     def test_income_edit_get(self):
@@ -83,13 +100,13 @@ class AmountViewTests(Authenticate):
         """
         self.client.login(username="testUser", password="test123")
 
-        test_amount = AmountFactory.create(
+        test_income = AmountFactory.create(
             name="Work",
             budget=self.budget,
             amount_type="IN"
         )
 
-        response = self.client.get(reverse("edit_income", kwargs={"pk": test_amount.amount_id}))
+        response = self.client.get(reverse("edit_income", kwargs={"pk": test_income.amount_id}))
         self.assertEquals(response.status_code, 200)
         self.assertContains(response, "Edit Income")
 
@@ -97,46 +114,168 @@ class AmountViewTests(Authenticate):
         """
         Tests that the user can post to edit an income
         """
-        pass
+        self.client.login(username="testUser", password="test123")
+
+        test_income = AmountFactory.create(
+            name="Work",
+            budget=self.budget,
+            amount_type="IN"
+        )
+
+        response = self.client.post(
+            reverse("edit_income", kwargs={"pk": test_income.amount_id}),
+            data={
+                "name":"Work (Updated)",
+                "amount": 600,
+
+            }
+        )
+
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(test_income.name, "Work (Updated)")
+        self.assertEquals(test_income.amount, 600)
 
     def test_income_delete_redirect_unauthorised(self):
         """
         Tests that the user is redirected to the login screen on 'delete_income` if they are not authorised.
         """
-        pass
+        test_income = AmountFactory.create(
+            name="Work",
+            budget=self.budget,
+            amount_type="IN"
+        )
+
+        # Test the get request on the delete_income view
+        response = self.client.get(reverse("delete_income", kwargs={"pk": test_income.amount_id}))
+        self.assertEquals(response.status_code, 404)
+
+        # Test the get request on the delete_income view
+        response = self.client.post(reverse("delete_income", kwargs={"pk": test_income.amount_id}))
+        self.assertEquals(response.status_code, 404)
+
 
     def test_income_delete_redirect_not_owner(self):
         """
         Tests that the user is redirected to the dashboard if they try to delete an income that is not theirs.
         """
-        pass
+        self.client.login(username="testUser2", password="test123")
+
+        test_income = AmountFactory.create(
+            name="Work",
+            budget=self.budget,
+            amount_type="IN"
+        )
+
+        # Test the get request on a delete_income view
+        response = self.client.get(reverse("delete_income", kwargs={"pk": test_income.amount_id}))
+        self.assertEquals(response.status_code, 404)
+
+        # Test the post request on a delete_income view
+        response = self.client.post(reverse("delete_income", kwargs={"pk": test_income.amount_id}))
+        self.assertEquals(response.status_code, 404)
 
     def test_expense_create_redirect_unauthorised(self):
         """
         Tests that the user is redirected to the login screen on 'create_expense` if they are not authorised.
         """
-        pass
+        AmountFactory.create(
+            name="Food",
+            budget=self.budget,
+            amount_type="EX"
+        )
+
+        # Test the get request on the create_expense view
+        response = self.client.get(reverse("create_expense"))
+        self.assertEquals(response.status_code, 404)
+
+        # Test the post request on the create_expense view
+        response = self.client.post(
+            reverse("create_expense"),
+            data={
+                "name": "New Expense",
+                "amount": 66.50
+            }
+        )
+        self.assertEquals(response.status_code, 404)
 
     def test_expense_edit_redirect_unauthorised(self):
         """
         Tests that the user is redirected to the login screen on 'edit_expense` if they are not authorised.
         """
-        pass
+        test_expense = AmountFactory.create(
+            name="Food",
+            budget=self.budget,
+            amount_type="EX"
+        )
+
+        # Test the get request on an edit_expense view
+        response = self.client.get(reverse("edit_expense", kwargs={"pk": test_expense.amount_id}))
+        self.assertEquals(response.status_code, 404)
+
+        # Test the post request on an edit_expense view
+        response = self.client.post(
+            reverse("edit_expense", kwargs={"pk": test_expense.amount_id}),
+            data={
+                "name": "Food (Updated)",
+                "amount": 75
+            }
+        )
+        self.assertEquals(response.status_code, 404)
 
     def test_expense_edit_redirect_not_owner(self):
         """
         Tests that the user is redirected to the dashboard if they try to edit an expense that is not theirs.
         """
-        pass
+        self.client.login(username="testUser2", password="test123")
+
+        test_expense = AmountFactory.create(
+            name="Food",
+            budget=self.budget,
+            amount_type="EX"
+        )
+
+        # Test the get request on the edit_expense view
+        response = self.client.get("edit_expense", kwargs={"pk": test_expense.amount_id})
+        self.assertEquals(response.status_code, 404)
+
+        # Test the post request on the edit_expense view
+        response = self.client.post(reverse("edit_expense"), kwargs={"pk": test_expense.amount_id})
+        self.assertEquals(response.status_code, 404)
 
     def test_expense_delete_redirect_unauthorised(self):
         """
         Tests that the user is redirected to the login screen on 'delete_expense` if they are not authorised.
         """
-        pass
+        test_expense = AmountFactory.create(
+            name="Food",
+            budget=self.budget,
+            amount_type="EX"
+        )
+
+        # Test the get request on the delete_expense view
+        response = self.client.get(reverse("delete_expense"), kwargs={"pk": test_expense.amount_id})
+        self.assertEquals(response.status_code, 404)
+
+        # Test the post request on the delete_expense view
+        response = self.client.post(reverse("delete_expense"), kwargs={"pk": test_expense.amount_id})
+        self.assertEquals(response.status_code, 404)
 
     def test_expense_delete_redirect_not_owner(self):
         """
         Tests that the user is redirected to the dashboard if they try to delete an expense that is not theirs.
         """
-        pass
+        self.client.login(username="testUser2", password="test123")
+
+        test_expense = AmountFactory.create(
+            name="Food",
+            budget=self.budget,
+            amount_type="EX"
+        )
+
+        # Test the get request on the delete_expense view
+        response = self.client.get(reverse("delete_expense", kwargs={"pk": test_expense.amount_id}))
+        self.assertEquals(response.status_code, 404)
+
+        # Test the post request on the delete_expense view
+        response = self.client.post(reverse("delete_expense", kwargs={"pk": test_expense.amount_id}))
+        self.assertEquals(response.status_code, 404)

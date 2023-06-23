@@ -133,7 +133,7 @@ class EditIncome(CheckOwner, LoginRequiredMixin, UpdateView):
     def get_login_url(self):
         return reverse("login")
 
-class DeleteIncome(LoginRequiredMixin, DeleteView):
+class DeleteIncome(CheckOwner, LoginRequiredMixin, DeleteView):
     """"
     A view for deleting an income.
     """
@@ -187,7 +187,7 @@ class CreateExpense(LoginRequiredMixin, FormView):
         else:
             return self.form_invalid(form)
         
-class EditExpense(LoginRequiredMixin, UpdateView):
+class EditExpense(CheckOwner, LoginRequiredMixin, UpdateView):
     """
     A view for editing an expense
     """
