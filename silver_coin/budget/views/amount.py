@@ -90,17 +90,18 @@ class CheckOwner():
     A mixin that checks whether the owner of the amount is the same as the user performing the request.
     """
 
-    def check_user(self, amount_id, user):
-        """
-        Returns a HttpResponseNotFound if the Amount does not exist or the user is not the owner
-        """
+    """
+    Adds a check at the start of the get request to check the owner
+    """
+    def get(self, request, *args, **kwargs):
         try:
-            amount = Amount.objects.get(pk=amount_id)
-            if amount.budget.owner != user:
+            amount = Amount.objects.get(pk=kwargs.get("pk"))
+            if amount.budget.owner != request.user:
                 return HttpResponseNotFound()
         except Amount.DoesNotExist:
             return HttpResponseNotFound()
-        return True
+        return super().get(request, *args, **kwargs)
+        
         
 class EditIncome(CheckOwner, LoginRequiredMixin, UpdateView):
     """
@@ -111,16 +112,6 @@ class EditIncome(CheckOwner, LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("amount")
     template_name = "amount/income_form.html"
     extra_context = {"action": "Edit", "type": "Income"}
-
-    def get(self, request, *args, **kwargs):
-        """
-        Make sure the user owns this amount before proceeding.
-        """
-        is_owner = self.check_user(kwargs.get("pk"), request.user)
-        if is_owner is True:
-            return super().get(request, *args, **kwargs)
-        else:
-            return HttpResponseNotFound()
 
     def get_queryset(self):
         """
