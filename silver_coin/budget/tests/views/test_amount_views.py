@@ -7,6 +7,7 @@ from ..factories import BudgetFactory
 from ..factories import AmountFactory
 
 from ...models import Amount
+from ...models import Budget
 
 
 class AmountViewTests(Authenticate):
@@ -24,6 +25,8 @@ class AmountViewTests(Authenticate):
         self.second_user = User.objects.create(username="testUser2")
         self.second_user.set_password("test123")
         self.second_user.save()
+
+        BudgetFactory.create(owner=self.second_user)
 
     def test_income_create_redirect_unauthorised(self):
         """
@@ -61,6 +64,31 @@ class AmountViewTests(Authenticate):
         test_income = Amount.objects.last()
         self.assertEquals(test_income.name, "New Income")
         self.assertEquals(test_income.amount, 78.75)
+
+    def test_income_create_no_budget(self):
+        """
+        Tests that the user is redirected to the dashboard on 'create_income' if they do not have a budget.
+        """
+        self.client.login(username="testUser", password="test123")
+
+        # Remove the user's budget for this test
+        Budget.objects.get(owner=self.user).delete()
+
+        response = self.client.get(reverse("create_income"))
+
+        self.assertEquals(response.status_code, 302)
+
+        response = self.client.post(
+            reverse("create_income"),
+            data={
+                "name": "New Income",
+                "amount": 78.75
+            },
+        )
+        self.assertEquals(response.status_code, 302)
+
+        # Check that no income was created
+        self.assertEquals(Amount.objects.count(), 0)
     
 
 
@@ -131,9 +159,11 @@ class AmountViewTests(Authenticate):
             }
         )
 
+        updated_income = Amount.objects.get(pk=test_income.amount_id)
+
         self.assertEquals(response.status_code, 302)
-        self.assertEquals(test_income.name, "Work (Updated)")
-        self.assertEquals(test_income.amount, 600)
+        self.assertEquals(updated_income.name, "Work (Updated)")
+        self.assertEquals(updated_income.amount, 600)
 
     def test_income_delete_redirect_unauthorised(self):
         """
@@ -198,6 +228,33 @@ class AmountViewTests(Authenticate):
         )
         self.assertEquals(response.status_code, 302)
 
+    def test_expense_create_redirect_no_budget(self):
+        """
+        Tests that the user is redirected to the dashboard if they try to create an expense without having a budget.
+
+        If they don't have a budget then they can't have any expenses.
+        """
+        self.client.login(username="testUser", password="test123")
+
+        # Remove the user's budget for this test
+        Budget.objects.get(owner=self.user).delete()
+
+        response = self.client.get(reverse("create_expense"))
+
+        self.assertEquals(response.status_code, 302)
+
+        response = self.client.post(
+            reverse("create_expense"),
+            data={
+                "name": "New Expense",
+                "amount": 78.75
+            },
+        )
+        self.assertEquals(response.status_code, 302)
+
+        # Check that no income was created
+        self.assertEquals(Amount.objects.count(), 0)
+
     def test_expense_edit_redirect_unauthorised(self):
         """
         Tests that the user is redirected to the login screen on 'edit_expense` if they are not authorised.
@@ -239,7 +296,7 @@ class AmountViewTests(Authenticate):
         self.assertEquals(response.status_code, 404)
 
         # Test the post request on the edit_expense view
-        response = self.client.post(reverse("edit_expense"), kwargs={"pk": test_expense.amount_id})
+        response = self.client.post(reverse("edit_expense", kwargs={"pk": test_expense.amount_id}))
         self.assertEquals(response.status_code, 404)
 
     def test_expense_delete_redirect_unauthorised(self):
@@ -253,11 +310,11 @@ class AmountViewTests(Authenticate):
         )
 
         # Test the get request on the delete_expense view
-        response = self.client.get(reverse("delete_expense"), kwargs={"pk": test_expense.amount_id})
+        response = self.client.get(reverse("delete_expense", kwargs={"pk": test_expense.amount_id}))
         self.assertEquals(response.status_code, 302)
 
         # Test the post request on the delete_expense view
-        response = self.client.post(reverse("delete_expense"), kwargs={"pk": test_expense.amount_id})
+        response = self.client.post(reverse("delete_expense", kwargs={"pk": test_expense.amount_id}))
         self.assertEquals(response.status_code, 302)
 
     def test_expense_delete_redirect_not_owner(self):
@@ -279,3 +336,4 @@ class AmountViewTests(Authenticate):
         # Test the post request on the delete_expense view
         response = self.client.post(reverse("delete_expense", kwargs={"pk": test_expense.amount_id}))
         self.assertEquals(response.status_code, 404)
+

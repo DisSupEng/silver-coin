@@ -6,6 +6,7 @@ from django.views.generic import FormView
 from django.views.generic import UpdateView
 from django.views.generic import DeleteView
 from django.urls import reverse, reverse_lazy
+from django.shortcuts import redirect
 
 from ..forms import AmountForm
 from ..forms import IncomeForm
@@ -48,7 +49,25 @@ class AmountList(LoginRequiredMixin, ListView):
             net_amount=Budget.objects.get(owner=self.request.user).net_amount()
         )
     
-class CreateIncome(LoginRequiredMixin, FormView):
+class CheckBudgetExists():
+    """
+    A Mixin that checks if the user has a Budget.
+
+    Will redirect to the dashboard if they don't.
+    """
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Override to check the user has a Budget.
+        """
+        try:
+            Budget.objects.get(owner=request.user)
+        except Budget.DoesNotExist:
+            return redirect(reverse("dashboard"))
+
+        return super().dispatch(request, *args, **kwargs)
+    
+class CreateIncome(LoginRequiredMixin, CheckBudgetExists, FormView):
     """
     A view for creating Incomes
     """
@@ -91,16 +110,53 @@ class CheckOwner():
     """
 
     """
-    Adds a check at the start of the get request to check the owner
+    Adds a check at the start of the get request to check the owner.
+    Also checks that the user actually has a budget of their own.0
     """
-    def get(self, request, *args, **kwargs):
+    def check_owner(self, amount_id, user):
+        """
+        Checks that the user is the owner of the amount they are trying to access.
+
+        :param: amount_id, the id of the amount object
+        :param: user, the user making the request
+
+        :returns: True if owner, 302 if they do not have a budget, 404 if they are trying to aceess an amount that is not theirs
+        """
+        # If the user does not have a budget redirect to dashboard
         try:
-            amount = Amount.objects.get(pk=kwargs.get("pk"))
-            if amount.budget.owner != request.user:
+            Budget.objects.get(owner=user)
+        except Budget.DoesNotExist:
+            return redirect(reverse("dashboard"))
+        try:
+            amount = Amount.objects.get(pk=amount_id)
+            if amount.budget.owner != user:
                 return HttpResponseNotFound()
         except Amount.DoesNotExist:
             return HttpResponseNotFound()
+        # They have a budget and they are the owner
+        return True
+
+    def get(self, request, *args, **kwargs):
+        """
+        Override to check the owner and redirect if required.
+        """
+        owner_response = self.check_owner(kwargs["pk"], request.user)
+        if owner_response is not True:
+            # Is a redirect or 404
+            return owner_response
+        # Owner OK, continue
         return super().get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        """
+        Override to check the owner and redirect if required.
+        """
+        owner_response = self.check_owner(kwargs["pk"], request.user)
+        if owner_response is not True:
+            # Is a redirect or 404
+            return owner_response
+        # Owner OK, continue
+        return super().post(request, *args, **kwargs)
         
         
 class EditIncome(CheckOwner, LoginRequiredMixin, UpdateView):
@@ -141,7 +197,7 @@ class DeleteIncome(CheckOwner, LoginRequiredMixin, DeleteView):
         incomes = Amount.objects.filter(amount_type="IN", budget=budget)
         return incomes
     
-class CreateExpense(LoginRequiredMixin, FormView):
+class CreateExpense(LoginRequiredMixin, CheckBudgetExists, FormView):
     """
     A view for creating Expenses
     """
