@@ -1,7 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
 
 class AmountManager(models.Manager):
     def create_amount(self, amount, period, is_actual=False):
@@ -20,7 +18,6 @@ class AmountManager(models.Manager):
             is_actual=is_actual,
             amount=0 if is_actual else amount.amount,
             budget_period=period,
-            owner=period.budget.owner
         )
 
 class Amount(models.Model):
@@ -55,7 +52,6 @@ class Amount(models.Model):
     def clean(self):
         """
         An Amount must be linked to either a Budget or Budget Period but not both.
-        Must be linked to an owner.
         Amount must be greater than zero
         One time amounts can only be linked to a Budget Period
         """
@@ -63,12 +59,18 @@ class Amount(models.Model):
             raise ValidationError("An Amount must be linked to either a Budget or BudgetPeriod")
         elif self.budget is not None and self.budget_period is not None:
             raise ValidationError("An Amount cannot be linked to both a Budget and BudgetPeriod")
-        try:
-            self.owner
-        except User.DoesNotExist:
-            raise ValidationError("Amount must be linked to a User")
 
         if self.amount <= 0:
             raise ValidationError("Amount must be greater than zero, mark as expense if outgoing cost")
         if self.is_one_time_cost and self.budget is not None:
             raise ValidationError("A one time amount must be linked to a Budget Period")
+        
+    @property
+    def income_percentage(self):
+        """
+        Returns the percentage of the income the amount is rounded to 2dp.
+        """
+        income = self.budget.total_income()
+        percentage = (self.amount / income) * 100
+
+        return "{:0.2f}".format(percentage)
