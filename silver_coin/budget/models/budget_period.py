@@ -44,8 +44,6 @@ class BudgetPeriod(models.Model):
             for cost in costs.all():
                 # Copy the estimates from the budget as they are currently
                 Amount.objects.create_amount(cost, self)
-                # Create the actual amount, set to 0. These will be adjusted as the costs come in
-                Amount.objects.create_amount(cost, self, True)
             
             return None
         else:

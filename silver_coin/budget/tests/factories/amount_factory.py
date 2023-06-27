@@ -9,8 +9,6 @@ class AmountFactory(DjangoModelFactory):
     name = "Food"
     amount_type = "EX"
     amount = 100
-    is_actual = False
-    is_one_time_cost = False
     # These fields are set in the tests
     budget = None
     budget_period = None

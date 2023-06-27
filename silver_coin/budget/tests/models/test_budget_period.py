@@ -71,13 +71,6 @@ class BudgetPeriodTests(Authenticate):
 
     def test_amounts(self):
         # Check that the period contains the estimates
-        estimates = self.budget_period.amount_set.filter(is_actual=False)
+        estimates = self.budget_period.amount_set.all()
         self.assertEquals(estimates.count(), 3)
-
-        # Check that the is actual amounts are 0
-        actuals = self.budget_period.amount_set.filter(is_actual=True)
-        self.assertEquals(actuals.count(), 3)
-        # All actual amounts should be 0
-        for actual in actuals.all():
-            self.assertEquals(actual.amount, 0)
     

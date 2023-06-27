@@ -90,8 +90,6 @@ class CreateIncome(LoginRequiredMixin, CheckBudgetExists, FormView):
             amount = Amount(
                 **form.cleaned_data,
                 amount_type="IN",
-                is_actual=False,
-                is_one_time_cost=False,
                 budget=budget
             )
             try:

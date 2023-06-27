@@ -1,8 +1,10 @@
 from django.db import models
+
+from datetime import datetime
 from django.core.exceptions import ValidationError
 
 class AmountManager(models.Manager):
-    def create_amount(self, amount, period, is_actual=False):
+    def create_amount(self, amount, period):
         """ 
         This method will be called when creating a new BudgetPeriod.
         The Amount objects on the Budget must be copied so they are recorded as they were at the time 
@@ -15,8 +17,7 @@ class AmountManager(models.Manager):
         self.create(
             name=amount.name, 
             amount_type=amount.amount_type, 
-            is_actual=is_actual,
-            amount=0 if is_actual else amount.amount,
+            amount=amount.amount,
             budget_period=period,
         )
 
@@ -35,11 +36,6 @@ class Amount(models.Model):
     amount_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, null=False, blank=False, verbose_name="Name")
     amount_type = models.CharField(choices=AMOUNT_TYPES, null=False, blank=False, max_length=2, verbose_name="Type")
-    # Is the amount model an actual amount (i.e the actual amount that has been spent)
-    # We need this because a budget period copies the amounts from the current budget and creates a record for itself
-    is_actual = models.BooleanField(null=False, editable=False, default=False)
-    # Is the amount a one time cost
-    is_one_time_cost = models.BooleanField(null=False, default=True)
     # The maximum number of digits including decimal places is 7
     amount = models.DecimalField(null=False, blank=False, max_digits=7, decimal_places=2)
     budget = models.ForeignKey("Budget", null=True, blank=True, default=None, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget", related_name="amounts")
@@ -62,8 +58,6 @@ class Amount(models.Model):
 
         if self.amount <= 0:
             raise ValidationError("Amount must be greater than zero, mark as expense if outgoing cost")
-        if self.is_one_time_cost and self.budget is not None:
-            raise ValidationError("A one time amount must be linked to a Budget Period")
         
     @property
     def income_percentage(self):
@@ -74,3 +68,16 @@ class Amount(models.Model):
         percentage = (self.amount / income) * 100
 
         return "{:0.2f}".format(percentage)
+    
+class ActualAmount(models.Model):
+    """
+    An ActualAmount is the model that represents what a user actually spends.
+
+    It is linked to an Amount which determines the type of Amount it is, i.e name and type.
+    It is also linked to a BudgetPeriod which records how much was actually spend over the period of time.
+    """
+    actual_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255, null=False, blank=False)
+    occurred_on = models.DateField(null=False, blank=False, default=datetime.now)
+    estimate = models.ForeignKey("Amount", null=False, on_delete=models.CASCADE, related_name="actual_amounts")
+    period = models.ForeignKey("BudgetPeriod", null=False, on_delete=models.CASCADE, related_name="amounts")
