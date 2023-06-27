@@ -98,3 +98,26 @@ class BudgetTests(Authenticate):
 
         income = self.budget.amounts.filter(amount_type="IN")
         self.assertEquals(income.count(), 1)
+
+    def test_get_income_percentages(self):
+        income = AmountFactory.create(
+            name="Income",
+            amount_type="IN",
+            amount=300,
+            budget=self.budget
+        )
+        food_expense = AmountFactory.create(
+            name="Food",
+            amount_type="EX",
+            amount=100,
+            budget=self.budget
+        )
+        power_expense = AmountFactory.create(
+            name="Power",
+            amount_type="EX",
+            amount=150,
+            budget=self.budget
+        )
+
+        self.assertEquals(food_expense.income_percentage, "33.33")
+        self.assertEquals(power_expense.income_percentage, "50.00")

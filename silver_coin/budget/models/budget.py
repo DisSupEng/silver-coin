@@ -28,3 +28,21 @@ class Budget(models.Model):
             self.owner
         except User.DoesNotExist:
             raise ValidationError("Budget must be linked to a User")
+        
+    def total_income(self):
+        """
+        Returns the total income.
+        """
+        return sum([income.amount for income in self.amounts.filter(amount_type="IN")])
+    
+    def total_expense(self):
+        """
+        Returns the total expense.
+        """
+        return sum([expense.amount for expense in self.amounts.filter(amount_type="EX")])
+    
+    def net_amount(self):
+        """
+        The estimated NET amount of the budget.
+        """
+        return self.total_income() - self.total_expense()

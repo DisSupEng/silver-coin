@@ -44,3 +44,11 @@ textarea.materialize-textarea:focus:not([readonly]) {
 .select-wrapper input.select-dropdown:focus {
     border-bottom:1px solid blue;
 }
+
+span.negative-net {
+    color: red;
+}
+
+span.positive_net {
+    color: green;
+}
