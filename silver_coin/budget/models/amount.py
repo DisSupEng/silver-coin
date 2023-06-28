@@ -59,6 +59,8 @@ class Amount(models.Model):
         if self.amount <= 0:
             raise ValidationError("Amount must be greater than zero, mark as expense if outgoing cost")
         
+        return super().clean()
+        
     @property
     def income_percentage(self):
         """
@@ -79,5 +81,14 @@ class ActualAmount(models.Model):
     actual_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, null=False, blank=False)
     occurred_on = models.DateField(null=False, blank=False, default=datetime.now)
+    amount = models.DecimalField(null=False, blank=False, max_digits=7, decimal_places=2)
     estimate = models.ForeignKey("Amount", null=False, on_delete=models.CASCADE, related_name="actual_amounts")
     period = models.ForeignKey("BudgetPeriod", null=False, on_delete=models.CASCADE, related_name="amounts")
+
+    def clean(self) -> None:
+        if self.amount is None:
+            raise ValidationError("Amount cannot be null")
+        elif self.amount <= 0:
+            raise ValidationError("Amount must be greater than zero")
+        
+        return super().clean()
