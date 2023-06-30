@@ -6,6 +6,7 @@ from django.urls import reverse
 from ..helpers import Authenticate
 
 from ..factories import BudgetFactory
+from ..factories import BudgetPeriodFactory
 from ..factories import AmountFactory
 
 from ...models import Amount
@@ -354,21 +355,25 @@ class ActualAmountViewTests(Authenticate):
             budget=self.budget,
             amount_type="EX"
         )
+        self.period = BudgetPeriodFactory.create(
+            start_date=datetime.strptime("2023-06-26", "%Y-%M-%d").date(),
+            budget=self.budget
+        )
 
         self.second_user = User.objects.create(username="testUser2")
         self.second_user.set_password("test123")
         self.second_user.save()
 
-    def test_create_view_redirect_unauthorised(self):
+    def test_create_expense_view_redirect_unauthorised(self):
         """
-        Tests that the user is redirected to the login screen if they are unauthorised.
+        Tests that the user is redirected to the login screen if they are unauthorised when creating an expense.
         """
-        response = self.client.get(reverse("create_actual_amount"))
+        response = self.client.get(reverse("create_actual_expense"))
 
         self.assertEquals(response.status_code, 302)
 
         response = self.client.post(
-            reverse("create_actual_amount"),
+            reverse("create_actual_expense"),
             data={
                 "name": "Countdown",
                 "amount": 32.65,
@@ -379,19 +384,74 @@ class ActualAmountViewTests(Authenticate):
 
         self.assertEquals(response.status_code, 302)
 
-    def test_create_view(self):
+    def test_create_expense_view(self):
+        """
+        Tests that the user can create an expense.
+        """
         self.client.login(username="testUser", password="test123")
 
-        response = self.client.get(reverse("create_actual_amount"))
+        response = self.client.get(reverse("create_actual_expense"))
 
         self.assertEquals(response.status_code, 302)
 
         response = self.client.post(
-            reverse("create_actual_amount"),
+            reverse("create_actual_expense"),
             data={
                 "name": "Countdown",
                 "amount": 32.65,
                 "occurred_on": datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
                 "estimate_id": self.amount.amount_id
+            }
+        )
+
+    def test_create_income_view_redirect_unauthorised(self):
+        """
+        Tests that the user is redirected to the login screen if they are unauthorised when creating an income.
+        """
+        test_income = AmountFactory.create(
+            name="Work",
+            amount=500,
+            amount_type="IN"
+        )
+
+        response = self.client.get(reverse("create_actual_income"))
+
+        self.assertEquals(response.status_code, 302)
+
+        response = self.client.post(
+            reverse("create_actual_income"),
+            data={
+                "name": "Work",
+                "amount": 500,
+                "occurred_on": datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
+                "estimate_id": test_income.amount_id
+            }
+        )
+
+        self.assertEquals(response.status_code, 302)
+
+    def test_create_income_view(self):
+        """
+        Tests that the user can create an income.
+        """
+        test_income = AmountFactory.create(
+            name="Work",
+            amount=500,
+            amount_type="IN"
+        )
+
+        self.client.login(username="testUser", password="test123")
+
+        response = self.client.get(reverse("create_actual_income"))
+
+        self.assertEquals(response.status_code, 302)
+
+        response = self.client.post(
+            reverse("create_actual_income"),
+            data={
+                "name": "Work",
+                "amount": 500,
+                "occurred_on": datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
+                "estimate_id": test_income.amount_id
             }
         )
