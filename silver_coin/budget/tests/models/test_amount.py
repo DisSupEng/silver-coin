@@ -90,7 +90,7 @@ class ActualAmountTests(Authenticate):
 
     def test_amount_blank(self):
         self.actual_amount.amount = None
-        with self.assertRaisesMessage(ValidationError, "Amount cannot be null"):
+        with self.assertRaisesMessage(ValidationError, "This field cannot be null"):
             self.actual_amount.full_clean()
 
     def test_amount_greater_than_zero(self):
@@ -109,5 +109,10 @@ class ActualAmountTests(Authenticate):
 
     def test_occurred_on_greater_than_period_start(self):
         self.actual_amount.occurred_on = datetime.strptime("2023-05-28", "%Y-%M-%d").date()
-        with self.assertRaisesMessage(ValidationError, "Occurred On must be greater than period start date"):
+        with self.assertRaisesMessage(ValidationError, "Occurred On must be greater than or equal to period start date"):
+            self.actual_amount.full_clean()
+    
+    def test_occurred_on_less_than_period_end(self):
+        self.actual_amount.occurred_on = datetime.strptime("2023-06-05", "%Y-%M-%d").date()
+        with self.assertRaisesMessage(ValidationError, "Occurred On must be less than end date"):
             self.actual_amount.full_clean()

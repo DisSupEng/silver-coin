@@ -25,7 +25,7 @@ class ActualAmountFactory(DjangoModelFactory):
         model = ActualAmount
     
     name = "Countdown"
-    amount = 25.76
+    amount = "25.76"
     occurred_on = datetime.strptime("2023-06-28", "%Y-%M-%d").date()
     estimate = None
     period = None

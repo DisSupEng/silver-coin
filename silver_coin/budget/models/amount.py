@@ -45,12 +45,14 @@ class Amount(models.Model):
     objects = AmountManager()
 
 
-    def clean(self):
+    def full_clean(self, exclude=None, validate_unique=True, validate_constraints=True):
         """
         An Amount must be linked to either a Budget or Budget Period but not both.
         Amount must be greater than zero
         One time amounts can only be linked to a Budget Period
         """
+        super().full_clean()
+
         if self.budget is None and self.budget_period is None:
             raise ValidationError("An Amount must be linked to either a Budget or BudgetPeriod")
         elif self.budget is not None and self.budget_period is not None:
@@ -58,8 +60,6 @@ class Amount(models.Model):
 
         if self.amount <= 0:
             raise ValidationError("Amount must be greater than zero, mark as expense if outgoing cost")
-        
-        return super().clean()
         
     @property
     def income_percentage(self):
@@ -85,10 +85,13 @@ class ActualAmount(models.Model):
     estimate = models.ForeignKey("Amount", null=False, on_delete=models.CASCADE, related_name="actual_amounts")
     period = models.ForeignKey("BudgetPeriod", null=False, on_delete=models.CASCADE, related_name="amounts")
 
-    def clean(self) -> None:
-        if self.amount is None:
-            raise ValidationError("Amount cannot be null")
-        elif self.amount <= 0:
+    def full_clean(self, exclude=None, validate_unique=True, validate_constraints=True) -> None:
+        super().full_clean()
+
+        if self.amount <= 0:
             raise ValidationError("Amount must be greater than zero")
         
-        return super().clean()
+        if self.occurred_on >= self.period.start_date:
+            raise ValidationError("Occurred On must be greater than or equal to period start date")
+        elif self.occurred_on < self.period.end_date:
+            raise ValidationError("Occurred On must be less than end date")
