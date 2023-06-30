@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.urls import reverse
 
@@ -337,3 +339,59 @@ class AmountViewTests(Authenticate):
         response = self.client.post(reverse("delete_expense", kwargs={"pk": test_expense.amount_id}))
         self.assertEquals(response.status_code, 404)
 
+class ActualAmountViewTests(Authenticate):
+    """
+    Tests for the ActualAmount views.
+    """
+    def setUp(self):
+        """
+        Creates a budget and amount to test the actual amount views.
+        """
+        super().setUp()
+        self.budget = BudgetFactory.create(owner=self.user)
+        self.amount = AmountFactory.create(
+            name="Food",
+            budget=self.budget,
+            amount_type="EX"
+        )
+
+        self.second_user = User.objects.create(username="testUser2")
+        self.second_user.set_password("test123")
+        self.second_user.save()
+
+    def test_create_view_redirect_unauthorised(self):
+        """
+        Tests that the user is redirected to the login screen if they are unauthorised.
+        """
+        response = self.client.get(reverse("create_actual_amount"))
+
+        self.assertEquals(response.status_code, 302)
+
+        response = self.client.post(
+            reverse("create_actual_amount"),
+            data={
+                "name": "Countdown",
+                "amount": 32.65,
+                "occurred_on": datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
+                "estimate_id": self.amount.amount_id
+            }
+        )
+
+        self.assertEquals(response.status_code, 302)
+
+    def test_create_view(self):
+        self.client.login(username="testUser", password="test123")
+
+        response = self.client.get(reverse("create_actual_amount"))
+
+        self.assertEquals(response.status_code, 302)
+
+        response = self.client.post(
+            reverse("create_actual_amount"),
+            data={
+                "name": "Countdown",
+                "amount": 32.65,
+                "occurred_on": datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
+                "estimate_id": self.amount.amount_id
+            }
+        )
