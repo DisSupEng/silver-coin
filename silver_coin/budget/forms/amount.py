@@ -30,4 +30,4 @@ class ActualAmountForm(forms.Form):
         widget=forms.SelectDateWidget(attrs={"class": "browser-default"})
     )
     amount = forms.DecimalField(required=True, max_digits=7, decimal_places=2)
-    estimate = forms.Select()
+    estimate = forms.ChoiceField(widget=forms.Select())

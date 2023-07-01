@@ -298,12 +298,13 @@ class ActualAmountList(LoginRequiredMixin, ListView):
         actual_expenses = actual_amounts.filter(estimate__amount_type="EX")
         total_expense = sum([expense.amount for expense in actual_expenses])
         return super().get_context_data(
-            **kwargs, 
+            **kwargs,
+            period_id=self.kwargs["period_id"], 
             incomes=actual_incomes, 
             expenses=actual_expenses, 
             total_income=total_income, 
             total_expense=total_expense,
-            net_amount=total_expense - total_income
+            net_amount=total_expense - total_income,
         )
     
     def get(self, request, *args, **kwargs):
@@ -332,6 +333,31 @@ class CreateActualIncome(LoginRequiredMixin, FormView):
     A view for creating an actual income.
     """
     form_class = ActualAmountForm
+    template_name = "amount/actual_amount_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(
+            **kwargs,
+            period_id=self.kwargs["period_id"],
+            action="Create",
+            type="Income"
+        )
+
+        form = context["form"]
+        incomes = Amount.objects.filter(budget_period=self.kwargs["period_id"], amount_type="IN")
+        choices = []
+        for income in incomes:
+            choices.append(
+                (income.amount_id, f"{income.name} - ${income.amount}")
+            )
+
+        
+        
+        form.fields["estimate"].choices = choices
+
+        return context
+        
+
 
     def get_login_url(self):
         return reverse("login")
