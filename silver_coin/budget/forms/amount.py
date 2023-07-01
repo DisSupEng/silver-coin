@@ -1,3 +1,4 @@
+from datetime import date
 from django import forms
 
 from ..models import Amount
@@ -19,3 +20,14 @@ class IncomeForm(forms.ModelForm):
     class Meta:
         model = Amount
         fields = ("name", "amount")
+
+class ActualAmountForm(forms.Form):
+    name = forms.CharField(max_length=255, required=True)
+    occurred_on = forms.DateField(
+        required=True,
+        label="Occurred On",
+        initial=date.today,
+        widget=forms.SelectDateWidget(attrs={"class": "browser-default"})
+    )
+    amount = forms.DecimalField(required=True, max_digits=7, decimal_places=2)
+    estimate = forms.Select()

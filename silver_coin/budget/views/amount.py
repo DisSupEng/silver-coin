@@ -1,5 +1,7 @@
+from typing import Any, Dict
 from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.query import QuerySet
 from django.http import HttpResponseNotFound
 from django.views.generic import ListView
 from django.views.generic import FormView
@@ -10,8 +12,11 @@ from django.shortcuts import redirect
 
 from ..forms import AmountForm
 from ..forms import IncomeForm
+from ..forms import ActualAmountForm
 from ..models import Budget
+from ..models import BudgetPeriod
 from ..models import Amount
+from ..models import ActualAmount
 
 class AmountList(LoginRequiredMixin, ListView):
     """
@@ -218,8 +223,6 @@ class CreateExpense(LoginRequiredMixin, CheckBudgetExists, FormView):
             amount = Amount(
                 **form.cleaned_data,
                 amount_type="EX",
-                is_actual=False,
-                is_one_time_cost=False,
                 budget=budget
             )
             try:
@@ -273,3 +276,85 @@ class DeleteExpense(LoginRequiredMixin, DeleteView):
 
     def get_login_url(self):
         return reverse("login")
+    
+class ActualAmountList(LoginRequiredMixin, ListView):
+    """
+    A view for displaying Actual Amounts.
+    """
+    model = ActualAmount
+    template_name = "amount/actual_amount_list.html"
+    context_object_name = "actual_amounts"
+
+    def get_login_url(self):
+        return reverse("login")
+    
+    def get_context_data(self, **kwargs):
+        """
+        Override to get the incomes and expenses as separate querysets.
+        """
+        actual_amounts = self.get_queryset()
+        actual_incomes = actual_amounts.filter(estimate__amount_type="IN")
+        total_income = sum([income.amount for income in actual_incomes])
+        actual_expenses = actual_amounts.filter(estimate__amount_type="EX")
+        total_expense = sum([expense.amount for expense in actual_expenses])
+        return super().get_context_data(
+            **kwargs, 
+            incomes=actual_incomes, 
+            expenses=actual_expenses, 
+            total_income=total_income, 
+            total_expense=total_expense,
+            net_amount=total_expense - total_income
+        )
+    
+    def get(self, request, *args, **kwargs):
+        """
+        Override to make sure the user owns the budget.
+        """
+        try:
+            owner = BudgetPeriod.objects.get(budget_period_id=kwargs["period_id"]).budget.owner
+            if owner == request.user:
+                return super().get(request, *args, **kwargs)
+            else:
+                return HttpResponseNotFound()
+        except BudgetPeriod.DoesNotExist:
+            return HttpResponseNotFound()
+    
+    def get_queryset(self):
+        """
+        Override to get the actual amounts for this budget period
+        """
+        period_id = self.kwargs["period_id"]
+
+        return ActualAmount.objects.filter(period_id=period_id)
+    
+class CreateActualIncome(LoginRequiredMixin, FormView):
+    """
+    A view for creating an actual income.
+    """
+    form_class = ActualAmountForm
+
+    def get_login_url(self):
+        return reverse("login")
+    
+    def post(self, request, *args, **kwargs):
+        """
+        Override to add extra fields to the model.
+        """
+        budget_period = BudgetPeriod.objects.get(budget_period_id=kwargs["period_id"])
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            actual_amount = ActualAmount(
+                **form.cleaned_data,
+                period=budget_period
+            )
+            try:
+                actual_amount.full_clean()
+            except ValidationError as error:
+                form.add_error(error=error.message)
+                return self.form_invalid(form)
+            actual_amount.save()
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+    

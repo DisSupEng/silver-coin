@@ -29,7 +29,7 @@
                                     <tr>
                                         <th>{{ period.start_date }}</th>
                                         <th>{{ period.end_date }}</th>
-                                        <th><a href="#" class="waves-effect waves-light btn blue">Actual Amounts</a></th>
+                                        <th><a href="{% url 'actual_amount' period_id=period.budget_period_id %}" class="waves-effect waves-light btn blue">Actual Amounts</a></th>
                                         <th><a href="{% url 'edit_budget_period' pk=period.budget_period_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
                                         <th><a href="{% url 'delete_budget_period' pk=period.budget_period_id %}" class="waves-effect waves-light btn red">Delete</a></th>
                                     </tr>
