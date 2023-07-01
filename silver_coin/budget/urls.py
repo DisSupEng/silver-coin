@@ -4,6 +4,10 @@ from .views import DashboardView
 from .views import CreateBudget
 from .views import EditBudget
 from .views import DeleteBudget
+from .views import BudgetPeriodList
+from .views import CreateBudgetPeriod
+from .views import EditBudgetPeriod
+from .views import DeleteBudgetPeriod
 from .views import AmountList
 from .views import CreateIncome
 from .views import EditIncome
@@ -18,6 +22,11 @@ urlpatterns = [
     path("budget/create", CreateBudget.as_view(), name="create_budget"),
     path("budget/edit", EditBudget.as_view(), name="edit_budget"),
     path("budget/delete", DeleteBudget.as_view(), name="delete_budget"),
+    # BudgetPeriod URLs
+    path("budget_period/", BudgetPeriodList.as_view(), name="budget_period"),
+    path("budget_period/create", CreateBudgetPeriod.as_view(), name="create_budget_period"),
+    path("budget_period/edit/<int:pk>", EditBudgetPeriod.as_view(), name="edit_budget_period"),
+    path("budget_period/delete/<int:pk>", DeleteBudgetPeriod.as_view(), name="delete_budget_period"),
     # Amount URLs
     path("amount/", AmountList.as_view(), name="amount"),
     path("income/create", CreateIncome.as_view(), name="create_income"),

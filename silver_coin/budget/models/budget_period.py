@@ -24,25 +24,34 @@ class BudgetPeriod(models.Model):
     # Actual Incomes are defined on the Amount model
     budget = models.ForeignKey("Budget", null=False, blank=False, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
 
-    def full_clean(self):
-        super().full_clean()
+    def full_clean(self, exclude=None, validate_unique=True):
+        super().full_clean(exclude=["end_date"])
         end_date = self.calculate_end_date()
 
-        # Once the dates are calculated, double check that there are no overlapping periods
-        overlapping_count = BudgetPeriod.objects.filter(
-            Q(start_date__lte=self.start_date, end_date__gt=self.start_date) |
-            Q(start_date__lte=end_date, end_date__gt=end_date)
-        ).count()
+        # If we are editing an existing period exclude the current model instance
+        if self.budget_period_id:
+            # Once the dates are calculated, double check that there are no overlapping periods
+            overlapping_count = BudgetPeriod.objects.filter(
+                ~Q(budget_period_id=self.budget_period_id),
+                Q(start_date__lte=self.start_date, end_date__gt=self.start_date) |
+                Q(start_date__lte=end_date, end_date__gt=end_date)
+            ).count()
+        else:
+            # Once the dates are calculated, double check that there are no overlapping periods
+            overlapping_count = BudgetPeriod.objects.filter(
+                Q(start_date__lte=self.start_date, end_date__gt=self.start_date) |
+                Q(start_date__lte=end_date, end_date__gt=end_date)
+            ).count()
         if overlapping_count > 0:
             raise ValidationError("Budget Period overlaps with existing period, please check the dates and try again!")
         
         return None
 
     def save(self, *args, **kwargs):
-        # Only set the end date and create amounts if it is the first time saving
+        self.end_date = self.calculate_end_date()
+
+        # Only create amounts if it is the first time saving
         if self._state.adding:
-            self.end_date = self.calculate_end_date()
-            
             super().save(*args, **kwargs)
 
             # Create the Incomes and Expense for this Budget Period

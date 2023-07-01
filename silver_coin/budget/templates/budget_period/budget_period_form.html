@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} {{ type }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title center">{{ action }} Budget Period</span>
+                    <p>Please fill in the details below</p>
+                    {% if form.non_field_errors %}
+                        {{ form.non_field_errors }}
+                    {% endif %}
+                    {% if action == "Create" %}
+                    <form action="{% url 'create_budget_period' %}" method="post">
+                    {% else %}
+                    <form action="#" method="post">
+                    {% endif %}
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col s12">
+                                <label for="{{ form.start_date.id_for_label }}">Start Date</label>
+                                <ul>
+                                    {{ form.start_date.errors }}
+                                </ul>
+                                {{ form.start_date }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s4">
+                                <a href="{% url 'budget_period' %}">
+                                    <div class="waves-effect waves-light btn blue">
+                                        Back
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col s4"></div>
+                            <div class="col s4">
+                                <button class="waves-effect waves-light btn right blue" type="submit">{{ action }} Budget Period</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

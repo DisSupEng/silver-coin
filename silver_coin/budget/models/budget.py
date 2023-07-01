@@ -22,7 +22,7 @@ class Budget(models.Model):
     def clean(self):
         """
         Add a custom validator that checks whether the Budget has a user.
-        It is easier to catch it here than waiting for it to hit the database/
+        It is easier to catch it here than waiting for it to hit the database.
         """
         try:
             self.owner
