@@ -73,4 +73,41 @@ class BudgetPeriodTests(Authenticate):
         # Check that the period contains the estimates
         estimates = self.budget_period.amount_set.all()
         self.assertEquals(estimates.count(), 3)
+
+    def test_date_overlap_start_date(self):
+        self.budget.period_type = "days"
+        self.budget.period_length = 7
+        self.budget.save()
+
+        self.budget_period.start_date = date(2023, 7, 1)
+        self.budget_period.end_date = date(2023, 7, 8)
+        self.budget_period.save()
+
+        self.assertEquals(self.budget_period.start_date, date(2023, 7, 1))
+        self.assertEquals(self.budget_period.end_date, date(2023, 7, 8))
+
+        overlapping_period = BudgetPeriodFactory.build(start_date=date(2023, 7, 2), budget=self.budget)
+
+        with self.assertRaisesMessage(ValidationError, "Budget Period overlaps with existing period, please check the dates and try again!"):
+            overlapping_period.full_clean()
+        
+    def test_date_overlap_end_date(self):
+        self.budget.period_type = "days"
+        self.budget.period_length = 7
+        self.budget.save()
+
+        self.budget_period.start_date = date(2023, 7, 1)
+        self.budget_period.end_date = date(2023, 7, 8)
+        self.budget_period.save()
+
+        self.assertEquals(self.budget_period.start_date, date(2023, 7, 1))
+        self.assertEquals(self.budget_period.end_date, date(2023, 7, 8))
+
+        overlapping_period = BudgetPeriodFactory.build(
+            start_date=date(2023, 6, 30), 
+            budget=self.budget
+        )
+
+        with self.assertRaisesMessage(ValidationError, "Budget Period overlaps with existing period, please check the dates and try again!"):
+            overlapping_period.full_clean()
     

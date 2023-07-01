@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime, timedelta
 
@@ -22,21 +24,25 @@ class BudgetPeriod(models.Model):
     # Actual Incomes are defined on the Amount model
     budget = models.ForeignKey("Budget", null=False, blank=False, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
 
+    def full_clean(self):
+        super().full_clean()
+        end_date = self.calculate_end_date()
+
+        # Once the dates are calculated, double check that there are no overlapping periods
+        overlapping_count = BudgetPeriod.objects.filter(
+            Q(start_date__lte=self.start_date, end_date__gt=self.start_date) |
+            Q(start_date__lte=end_date, end_date__gt=end_date)
+        ).count()
+        if overlapping_count > 0:
+            raise ValidationError("Budget Period overlaps with existing period, please check the dates and try again!")
+        
+        return None
+
     def save(self, *args, **kwargs):
         # Only set the end date and create amounts if it is the first time saving
         if self._state.adding:
-            period_length = self.budget.period_length
-            start_datetime = datetime.combine(self.start_date, datetime.min.time())
-
-            if self.budget.period_type == DAYS:
-                self.end_date = (start_datetime + relativedelta(days=period_length)).date()
-            elif self.budget.period_type == WEEKS:
-                self.end_date = (start_datetime + relativedelta(weeks=period_length)).date()
-            else:
-                # Timedelta can't do months, calculate using weeks instead
-                self.end_date = (start_datetime + relativedelta(months=period_length)).date()
+            self.end_date = self.calculate_end_date()
             
-
             super().save(*args, **kwargs)
 
             # Create the Incomes and Expense for this Budget Period
@@ -48,6 +54,23 @@ class BudgetPeriod(models.Model):
             return None
         else:
             return super().save(*args, **kwargs)
+        
+    def calculate_end_date(self):
+        """
+        Method calculates when the end date of the BudgetPeriod will be.
+        """
+        period_length = self.budget.period_length
+        start_datetime = datetime.combine(self.start_date, datetime.min.time())
+        end_date = None
+
+        if self.budget.period_type == DAYS:
+            end_date = (start_datetime + relativedelta(days=period_length)).date()
+        elif self.budget.period_type == WEEKS:
+            end_date = (start_datetime + relativedelta(weeks=period_length)).date()
+        else:
+            end_date = (start_datetime + relativedelta(months=period_length)).date()
+
+        return end_date
 
     def is_ended(self):
         """
