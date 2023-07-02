@@ -21,6 +21,7 @@
                                     <th>Amount</th>
                                     <th>% of income</th>
                                     <th>Occurred On</th>
+                                    <th>Type</th>
                                     <th></th>
                                     <th></th>
                                 </tr>
@@ -32,6 +33,7 @@
                                         <th>${{ income.amount }}</th>
                                         <th>{{ income.income_percentage }}%</th>
                                         <th>{{ income.occurred_on }}</th>
+                                        <th>{{ income.estimate.name }}</th>
                                         <th><a href="{% url 'edit_actual_income' period_id=period_id pk=income.actual_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
                                         <th><a href="{% url 'delete_actual_income' period_id=period_id pk=income.actual_id %}" class="waves-effect waves-light btn red">Delete</a></th>
                                     </tr>
@@ -57,7 +59,7 @@
                 <div class="card-content">
                     <span class="card-title center">Expenses</span>
                     <div class="row">
-                        <a href="#">
+                        <a href="{% url 'create_actual_expense' period_id=period_id %}">
                             <div class="col s2 offset-s10 waves-effect waves-light btn blue">
                                 Add Expense
                             </div>
@@ -70,6 +72,8 @@
                                 <th>Name</th>
                                 <th>Amount</th>
                                 <th>% of income</th>
+                                <th>Occurred On</th>
+                                <th>Type</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -80,8 +84,10 @@
                                     <th>{{ expense.name }}</th>
                                     <th>${{ expense.amount }}</th>
                                     <th>{{ expense.income_percentage }}%</th>
-                                    <th><a href="#" class="waves-effect waves-light btn blue">Edit</a></th>
-                                    <th><a href="#" class="waves-effect waves-light btn red">Delete</a></th>
+                                    <th>{{ expense.occurred_on }}</th>
+                                    <th>{{ expense.estimate.name }}</th>
+                                    <th><a href="{% url 'edit_actual_expense' period_id=period_id pk=expense.actual_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
+                                    <th><a href="{% url 'delete_actual_expense' period_id=period_id pk=expense.actual_id %}" class="waves-effect waves-light btn red">Delete</a></th>
                                 </tr>
                             {% endfor %}
                         </tbody>

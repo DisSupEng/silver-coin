@@ -14,14 +14,14 @@
                         </div>
                     </div>
                     {% if type == "Income" %}
-                    <form action="{% url 'delete_actual_income' period_id=actual_income.period.budget_period_id  pk=actual_income.actual_id %}" method="post">
+                    <form action="{% url 'delete_actual_income' period_id=actual_amount.period.budget_period_id  pk=actual_amount.actual_id %}" method="post">
                     {% else %}
                     <form action="#" method="post">
                     {% endif %}
                         {% csrf_token %}
                         <div class="row">
                             <div class="col s4">
-                            <a href="{% url 'actual_amount' period_id=actual_income.period.budget_period_id %}">
+                            <a href="{% url 'actual_amount' period_id=actual_amount.period.budget_period_id %}">
                                 <div class="waves-effect waves-light btn blue">
                                     Back
                                 </div>

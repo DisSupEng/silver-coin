@@ -17,9 +17,9 @@
                         {{ form.non_field_errors }}
                     {% endif %}
                     {% if action == "Create" %}
-                    <form action="{% url 'create_actual_income' period_id=period_id %}" method="post">
+                    <form action="{% url 'create_actual_expense' period_id=period_id %}" method="post">
                     {% else %}
-                    <form action="#" method="post">
+                    <form action="{% url 'edit_actual_expense' period_id=period_id pk=actualamount.actual_id %}" method="post">
                     {% endif %}
                         {% csrf_token %}
                         <div class="row">
