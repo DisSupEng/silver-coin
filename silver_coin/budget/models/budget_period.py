@@ -86,3 +86,21 @@ class BudgetPeriod(models.Model):
         Returns if the Budget period has ended.
         """
         return self.end_date < timezone.now().date()
+    
+    def total_income(self):
+        """
+        Returns the total income.
+        """
+        return sum([income.amount for income in self.amounts.filter(estimate__amount_type="IN")])
+    
+    def total_expense(self):
+        """
+        Returns the total expense.
+        """
+        return sum([expense.amount for expense in self.amounts.filter(estimate__amount_type="EX")])
+    
+    def net_amount(self):
+        """
+        The estimated NET amount of the budget.
+        """
+        return self.total_income() - self.total_expense()

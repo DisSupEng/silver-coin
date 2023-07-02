@@ -17,6 +17,8 @@ from .views import EditExpense
 from .views import DeleteExpense
 from .views import ActualAmountList
 from .views import CreateActualIncome
+from .views import EditActualIncome
+from .views import DeleteActualIncome
 
 urlpatterns = [
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
@@ -40,6 +42,6 @@ urlpatterns = [
     # Actual Amount URLs
     path("budget_period/<int:period_id>/actual/", ActualAmountList.as_view(), name="actual_amount"),
     path("budget_period/<int:period_id>/actual/create/", CreateActualIncome.as_view(), name="create_actual_income"),
-    #path("budget_period/<int:period_id>/actual/edit/<int:pk>", EditActualAmount.as_view(), name="edit_actual_amount"),
-    #path("budget_period/<int:period_id>/actual/delete/<int:pk>", DeleteActualAmount.as_view(), name="delete_actual_amount")
+    path("budget_period/<int:period_id>/actual/edit/<int:pk>", EditActualIncome.as_view(), name="edit_actual_income"),
+    path("budget_period/<int:period_id>/actual/delete/<int:pk>", DeleteActualIncome.as_view(), name="delete_actual_income")
 ]

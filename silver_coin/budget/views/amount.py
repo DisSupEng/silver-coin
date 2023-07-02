@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from ..forms import AmountForm
 from ..forms import IncomeForm
 from ..forms import ActualAmountForm
+from ..forms import ActualAmountModelForm
 from ..models import Budget
 from ..models import BudgetPeriod
 from ..models import Amount
@@ -250,8 +251,8 @@ class EditExpense(CheckOwner, LoginRequiredMixin, UpdateView):
         Get the queryset for the Budget's expense.
         """
         budget = Budget.objects.get(owner=self.request.user)
-        incomes = Amount.objects.filter(amount_type="EX", budget=budget)
-        return incomes
+        expenses = Amount.objects.filter(amount_type="EX", budget=budget)
+        return expenses
 
     def get_login_url(self):
         return reverse("login")
@@ -344,18 +345,14 @@ class CreateActualIncome(LoginRequiredMixin, FormView):
         )
 
         form = context["form"]
-        incomes = Amount.objects.filter(budget_period=self.kwargs["period_id"], amount_type="IN")
-        choices = []
-        for income in incomes:
-            choices.append(
-                (income.amount_id, f"{income.name} - ${income.amount}")
-            )
-
+        choices = self.get_choices()
         
-        
-        form.fields["estimate"].choices = choices
+        form.fields["estimate_id"].choices = choices
 
         return context
+    
+    def get_success_url(self):
+        return reverse("actual_amount", kwargs={"period_id": self.kwargs["period_id"]})
         
 
 
@@ -369,6 +366,9 @@ class CreateActualIncome(LoginRequiredMixin, FormView):
         budget_period = BudgetPeriod.objects.get(budget_period_id=kwargs["period_id"])
         form = self.form_class(request.POST)
 
+        # Populate the choices
+        form.fields["estimate_id"].choices = self.get_choices()
+
         if form.is_valid():
             actual_amount = ActualAmount(
                 **form.cleaned_data,
@@ -377,10 +377,98 @@ class CreateActualIncome(LoginRequiredMixin, FormView):
             try:
                 actual_amount.full_clean()
             except ValidationError as error:
-                form.add_error(error=error.message)
+                form.add_error(field=None, error=error.message)
                 return self.form_invalid(form)
             actual_amount.save()
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
+        
+    def get_choices(self):
+        """
+        Populates the correct choices for the select.
+
+        :returns: a list of tuples containing the the choices.
+        """
+        incomes = Amount.objects.filter(budget_period=self.kwargs["period_id"], amount_type="IN")
+        choices = []
+        for income in incomes:
+            choices.append(
+                (income.amount_id, f"{income.name} - ${income.amount}")
+            )
+        return choices
     
+class DeleteActualIncome(LoginRequiredMixin, DeleteView):
+    """"
+    A view for deleting an income.
+    """
+    model = ActualAmount
+    template_name = "amount/actual_amount_delete.html"
+    context_object_name = "actual_income"
+    
+    def get_queryset(self):
+        """
+        Get the queryset for the Budget's incomes.
+        """
+        
+        period = BudgetPeriod.objects.get(budget_period_id=self.kwargs["period_id"])
+        incomes = period.amounts.filter(estimate__amount_type="IN")
+        return incomes
+    
+    def get_login_url(self):
+        return reverse("login")
+    
+    def get_success_url(self):
+        return reverse("actual_amount", kwargs={"period_id": self.kwargs["period_id"]})
+    
+class EditActualIncome(LoginRequiredMixin, UpdateView):
+    """
+    A view for editing an expense
+    """
+    form_class = ActualAmountModelForm
+    template_name = "amount/actual_amount_form.html"
+    extra_context = {"action": "Edit", "type": "Income"}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(
+            **kwargs,
+            period_id=self.kwargs["period_id"],
+            action="Edit",
+            type="Income"
+        )
+
+        form = context["form"]
+        choices = self.get_choices()
+        
+        form.fields["estimate_id"].choices = choices
+
+        return context
+
+    def get_queryset(self):
+        """
+        Get the queryset for the Budget's incomes.
+        """
+        
+        period = BudgetPeriod.objects.get(budget_period_id=self.kwargs["period_id"])
+        incomes = period.amounts.filter(estimate__amount_type="IN")
+        return incomes
+    
+    def get_choices(self):
+        """
+        Populates the correct choices for the select.
+
+        :returns: a list of tuples containing the the choices.
+        """
+        incomes = Amount.objects.filter(budget_period=self.kwargs["period_id"], amount_type="IN")
+        choices = []
+        for income in incomes:
+            choices.append(
+                (income.amount_id, f"{income.name} - ${income.amount}")
+            )
+        return choices
+    
+    def get_login_url(self):
+        return reverse("login")
+    
+    def get_success_url(self):
+        return reverse("actual_amount", kwargs={"period_id": self.kwargs["period_id"]})

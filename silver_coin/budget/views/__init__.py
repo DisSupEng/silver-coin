@@ -15,3 +15,5 @@ from .budget_period import EditBudgetPeriod
 from .budget_period import DeleteBudgetPeriod
 from .amount import ActualAmountList
 from .amount import CreateActualIncome
+from .amount import EditActualIncome
+from .amount import DeleteActualIncome

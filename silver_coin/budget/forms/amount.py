@@ -2,6 +2,7 @@ from datetime import date
 from django import forms
 
 from ..models import Amount
+from ..models import ActualAmount
 
 class AmountForm(forms.Form):
     """
@@ -30,4 +31,20 @@ class ActualAmountForm(forms.Form):
         widget=forms.SelectDateWidget(attrs={"class": "browser-default"})
     )
     amount = forms.DecimalField(required=True, max_digits=7, decimal_places=2)
-    estimate = forms.ChoiceField(widget=forms.Select())
+    estimate_id = forms.ChoiceField(required=True, widget=forms.Select())
+
+class ActualAmountModelForm(forms.ModelForm):
+    class Meta:
+        model = ActualAmount
+        fields = ("name", "occurred_on", "amount", "estimate_id")
+
+    name = forms.CharField(max_length=255, required=True)
+    occurred_on = forms.DateField(
+        required=True,
+        label="Occurred On",
+        initial=date.today,
+        widget=forms.SelectDateWidget(attrs={"class": "browser-default"})
+    )
+    amount = forms.DecimalField(required=True, max_digits=7, decimal_places=2)
+    estimate_id = forms.ChoiceField(required=True, widget=forms.Select())
+

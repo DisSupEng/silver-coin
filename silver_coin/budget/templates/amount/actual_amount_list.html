@@ -20,6 +20,7 @@
                                     <th>Name</th>
                                     <th>Amount</th>
                                     <th>% of income</th>
+                                    <th>Occurred On</th>
                                     <th></th>
                                     <th></th>
                                 </tr>
@@ -30,8 +31,9 @@
                                         <th>{{ income.name }}</th>
                                         <th>${{ income.amount }}</th>
                                         <th>{{ income.income_percentage }}%</th>
-                                        <th><a href="#" class="waves-effect waves-light btn blue">Edit</a></th>
-                                        <th><a href="#" class="waves-effect waves-light btn red">Delete</a></th>
+                                        <th>{{ income.occurred_on }}</th>
+                                        <th><a href="{% url 'edit_actual_income' period_id=period_id pk=income.actual_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
+                                        <th><a href="{% url 'delete_actual_income' period_id=period_id pk=income.actual_id %}" class="waves-effect waves-light btn red">Delete</a></th>
                                     </tr>
                                 {% endfor %}
                             </tbody>
