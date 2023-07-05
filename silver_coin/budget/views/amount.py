@@ -463,8 +463,9 @@ class DeleteActualIncome(LoginRequiredMixin, DeleteView):
     A view for deleting an income.
     """
     model = ActualAmount
-    template_name = "amount/actual_income_delete.html"
+    template_name = "amount/actual_amount_delete.html"
     context_object_name = "actual_amount"
+    extra_context = {"type": "Income"}
     
     def get_queryset(self):
         """
@@ -618,8 +619,9 @@ class DeleteActualExpense(LoginRequiredMixin, DeleteView):
     A view for deleting an income.
     """
     model = ActualAmount
-    template_name = "amount/actual_expense_delete.html"
+    template_name = "amount/actual_amount_delete.html"
     context_object_name = "actual_amount"
+    extra_context = {"type": "Expense"}
     
     def get_queryset(self):
         """
