@@ -292,9 +292,9 @@ class ActualAmountList(LoginRequiredMixin, ListView):
         Override to get the incomes and expenses as separate querysets.
         """
         actual_amounts = self.get_queryset()
-        actual_incomes = actual_amounts.filter(estimate__amount_type="IN")
+        actual_incomes = actual_amounts.filter(estimate__amount_type="IN").order_by("-occurred_on")
         total_income = sum([income.amount for income in actual_incomes])
-        actual_expenses = actual_amounts.filter(estimate__amount_type="EX")
+        actual_expenses = actual_amounts.filter(estimate__amount_type="EX").order_by("-occurred_on")
         total_expense = sum([expense.amount for expense in actual_expenses])
         return super().get_context_data(
             **kwargs,

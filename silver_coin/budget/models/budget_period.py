@@ -73,11 +73,11 @@ class BudgetPeriod(models.Model):
         end_date = None
 
         if self.budget.period_type == DAYS:
-            end_date = (start_datetime + relativedelta(days=period_length)).date()
+            end_date = (start_datetime + relativedelta(days=period_length) - relativedelta(days=1)).date()
         elif self.budget.period_type == WEEKS:
-            end_date = (start_datetime + relativedelta(weeks=period_length)).date()
+            end_date = (start_datetime + relativedelta(weeks=period_length) - relativedelta(days=1)).date()
         else:
-            end_date = (start_datetime + relativedelta(months=period_length)).date()
+            end_date = (start_datetime + relativedelta(months=period_length) - relativedelta(days=1)).date()
 
         return end_date
 

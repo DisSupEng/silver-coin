@@ -22,7 +22,7 @@ class BudgetPeriodList(ListView):
         """
         Override to get the budget periods
         """
-        budget_periods = BudgetPeriod.objects.filter(budget__owner=self.request.user)
+        budget_periods = BudgetPeriod.objects.filter(budget__owner=self.request.user).order_by("-start_date")
         return budget_periods
 
 class CreateBudgetPeriod(LoginRequiredMixin, FormView):
