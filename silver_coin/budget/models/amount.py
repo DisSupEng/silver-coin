@@ -102,6 +102,9 @@ class ActualAmount(models.Model):
         Returns the percentage of the income the amount is rounded to 2dp.
         """
         income = self.period.total_income()
-        percentage = (self.amount / income) * 100
+        if income != 0:
+            percentage = (self.amount / income) * 100
+        else:
+            return "N/A"
 
         return "{:0.2f}".format(percentage)
