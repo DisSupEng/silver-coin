@@ -67,9 +67,11 @@ class Amount(models.Model):
         Returns the percentage of the income the amount is rounded to 2dp.
         """
         income = self.budget.total_income()
-        percentage = (self.amount / income) * 100
-
-        return "{:0.2f}".format(percentage)
+        if income != 0:
+            percentage = (self.amount / income) * 100
+            return "{:0.2f}".format(percentage)
+        else:
+            return "N/A"
     
 class ActualAmount(models.Model):
     """
@@ -93,8 +95,8 @@ class ActualAmount(models.Model):
         
         if self.occurred_on < self.period.start_date:
             raise ValidationError("Occurred On must be greater than or equal to period start date")
-        elif self.occurred_on >= self.period.end_date:
-            raise ValidationError("Occurred On must be less than end date")
+        elif self.occurred_on > self.period.end_date:
+            raise ValidationError("Occurred On must be less than or equal to the end date")
         
     @property
     def income_percentage(self):
@@ -104,7 +106,6 @@ class ActualAmount(models.Model):
         income = self.period.total_income()
         if income != 0:
             percentage = (self.amount / income) * 100
+            return "{:0.2f}".format(percentage)
         else:
             return "N/A"
-
-        return "{:0.2f}".format(percentage)
