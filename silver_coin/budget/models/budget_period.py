@@ -104,3 +104,19 @@ class BudgetPeriod(models.Model):
         The estimated NET amount of the budget.
         """
         return self.total_income() - self.total_expense()
+    
+    def summary_by_group(self, is_expense):
+        """
+        Returns a dictionary containing the amount for each amount type.
+
+        :param: is_expense, if the amount is an expense
+
+        :returns: a dictionary containing the sum for each amount
+        """
+        amount_type = "EX" if is_expense else "IN"
+        sums = {}
+        for amount in Amount.objects.filter(budget_period=self, amount_type=amount_type):
+            amount_sum = sum([actual.amount for actual in self.amounts.filter(estimate__amount_type=amount_type)])
+            name = amount.name
+            sums[name] = amount_sum
+        return sums
