@@ -109,3 +109,12 @@ class ActualAmount(models.Model):
             return "{:0.2f}".format(percentage)
         else:
             return "N/A"
+
+    @property
+    def pretty_occurred_on(self):
+        """
+        Returns the date in the format Day, dd-mm-yyyy.
+
+        :returns: a formatted string in the given format
+        """
+        return self.occurred_on.strftime("%a, %d-%b-%Y")

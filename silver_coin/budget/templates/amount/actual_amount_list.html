@@ -32,7 +32,7 @@
                                         <th>{{ income.name }}</th>
                                         <th>${{ income.amount }}</th>
                                         <th>{{ income.income_percentage }}{% if income.income_percentage != "N/A" %}%{% endif %}</th>
-                                        <th>{{ income.occurred_on }}</th>
+                                        <th>{{ income.pretty_occurred_on }}</th>
                                         <th>{{ income.estimate.name }}</th>
                                         <th><a href="{% url 'edit_actual_income' period_id=period_id pk=income.actual_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
                                         <th><a href="{% url 'delete_actual_income' period_id=period_id pk=income.actual_id %}" class="waves-effect waves-light btn red">Delete</a></th>
@@ -84,7 +84,7 @@
                                     <th>{{ expense.name }}</th>
                                     <th>${{ expense.amount }}</th>
                                     <th>{{ expense.income_percentage }}{% if expense.income_percentage != "N/A" %}%{% endif %}</th>
-                                    <th>{{ expense.occurred_on }}</th>
+                                    <th>{{ expense.pretty_occurred_on }}</th>
                                     <th>{{ expense.estimate.name }}</th>
                                     <th><a href="{% url 'edit_actual_expense' period_id=period_id pk=expense.actual_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
                                     <th><a href="{% url 'delete_actual_expense' period_id=period_id pk=expense.actual_id %}" class="waves-effect waves-light btn red">Delete</a></th>
