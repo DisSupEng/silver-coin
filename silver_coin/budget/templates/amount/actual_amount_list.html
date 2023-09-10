@@ -94,7 +94,7 @@
                     </table>
                     <div class="row">
                         <div class="col s6">
-                            <a href="#" class="waves-effect waves-light btn blue">View Summary by Group</a>
+                            <a href="{% url 'actual_expense_summary' period_id=period_id %}" class="waves-effect waves-light btn blue summary_btn">View Summary by Group</a>
                         </div>
                         <div class="col s6">
                             <h5 class="right">Total Expenses: ${{ total_expense }}</h5>

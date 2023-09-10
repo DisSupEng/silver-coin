@@ -52,3 +52,7 @@ span.negative-net {
 span.positive_net {
     color: green;
 }
+
+a.summary_btn {
+    margin-top: 2%;
+}

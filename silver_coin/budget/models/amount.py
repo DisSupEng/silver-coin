@@ -39,7 +39,8 @@ class Amount(models.Model):
     # The maximum number of digits including decimal places is 7
     amount = models.DecimalField(null=False, blank=False, max_digits=7, decimal_places=2)
     budget = models.ForeignKey("Budget", null=True, blank=True, default=None, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget", related_name="amounts")
-    budget_period = models.ForeignKey("BudgetPeriod", null=True, blank=True, default=None, db_column="budget_period", on_delete=models.CASCADE, verbose_name="Budget Period")
+    # If the Amount is on a budget period then it is the amount estimate at the time the period was created
+    budget_period = models.ForeignKey("BudgetPeriod", null=True, blank=True, default=None, db_column="budget_period", on_delete=models.CASCADE, verbose_name="Budget Period", related_name="estimates")
 
     # Define the model manager
     objects = AmountManager()

@@ -1,3 +1,4 @@
+from typing import Any
 from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotFound
@@ -5,6 +6,7 @@ from django.views.generic import ListView
 from django.views.generic import FormView
 from django.views.generic import UpdateView
 from django.views.generic import DeleteView
+from django.views.generic import TemplateView
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect
 
@@ -326,6 +328,73 @@ class ActualAmountList(LoginRequiredMixin, ListView):
         period_id = self.kwargs["period_id"]
 
         return ActualAmount.objects.filter(period_id=period_id)
+    
+class ActualExpenseSummary(LoginRequiredMixin, TemplateView):
+    """
+    A list view that displays a summary of the Expenses in the Period.
+    """
+    template_name = "amount/summary.html"
+
+    def get_login_url(self):
+        return reverse("login")
+        
+    
+    def get(self, request, *args, **kwargs):
+        """
+        Override to make sure the user owns the budget.
+        """
+        try:
+            owner = BudgetPeriod.objects.get(budget_period_id=kwargs["period_id"]).budget.owner
+            if owner == request.user:
+                return super().get(request, *args, **kwargs)
+            else:
+                return HttpResponseNotFound()
+        except BudgetPeriod.DoesNotExist:
+            return HttpResponseNotFound()
+        
+    def get_context_data(self, **kwargs):
+        summary_list = self.get_summary()
+
+        return super().get_context_data(
+            **kwargs,
+            summary=summary_list
+        )
+    
+    def get_summary(self):
+        """
+        A method that gets the summary dictionary for all amounts in the Budget Period
+        :returns: A list of dictionaries containing the name, sestimate and actual values for each amount
+        """
+        period_id = self.kwargs["period_id"]
+        period = BudgetPeriod.objects.get(pk=period_id)
+        amounts_dicts = {}
+
+        # Get the amount estimates a budget period
+        amounts = period.estimates.filter(amount_type="EX")
+        for amount in amounts:
+            amounts_dicts[amount.name] = {
+                "estimate": amount.amount,
+                "actual": 0
+            }
+
+        actual_amounts = period.amounts.all()
+        for actual_amount in actual_amounts:
+            name = actual_amount.estimate.name
+            if name in amounts_dicts:
+                new_actual = amounts_dicts[name]["actual"] + actual_amount.amount
+                amounts_dicts[name]["actual"] = new_actual
+
+        amounts_list = []
+        for name, value in amounts_dicts.items():
+            amounts_list.append({
+                "name": name,
+                "estimate": value["estimate"],
+                "actual": value["actual"],
+            })
+
+        return amounts_list
+            
+    
     
 class CreateActualIncome(LoginRequiredMixin, FormView):
     """
