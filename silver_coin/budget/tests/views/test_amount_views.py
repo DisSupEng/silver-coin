@@ -368,12 +368,12 @@ class ActualAmountViewTests(Authenticate):
         """
         Tests that the user is redirected to the login screen if they are unauthorised when creating an expense.
         """
-        response = self.client.get(reverse("create_actual_expense"))
+        response = self.client.get(reverse("create_actual_expense", kwargs={"period_id": self.period.budget_period_id}))
 
         self.assertEquals(response.status_code, 302)
 
         response = self.client.post(
-            reverse("create_actual_expense"),
+            reverse("create_actual_expense", kwargs={"period_id": self.period.budget_period_id}),
             data={
                 "name": "Countdown",
                 "amount": 32.65,
@@ -390,12 +390,12 @@ class ActualAmountViewTests(Authenticate):
         """
         self.client.login(username="testUser", password="test123")
 
-        response = self.client.get(reverse("create_actual_expense"))
+        response = self.client.get(reverse("create_actual_expense", kwargs={"period_id": self.period.budget_period_id}))
 
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, 200)
 
         response = self.client.post(
-            reverse("create_actual_expense"),
+            reverse("create_actual_expense", kwargs={"period_id": self.period.budget_period_id}),
             data={
                 "name": "Countdown",
                 "amount": 32.65,
@@ -403,6 +403,8 @@ class ActualAmountViewTests(Authenticate):
                 "estimate_id": self.amount.amount_id
             }
         )
+
+        self.assertEquals(response.status_code, 200)
 
     def test_create_income_view_redirect_unauthorised(self):
         """
@@ -414,12 +416,12 @@ class ActualAmountViewTests(Authenticate):
             amount_type="IN"
         )
 
-        response = self.client.get(reverse("create_actual_income"))
+        response = self.client.get(reverse("create_actual_income", kwargs={"period_id": self.period.budget_period_id}))
 
         self.assertEquals(response.status_code, 302)
 
         response = self.client.post(
-            reverse("create_actual_income"),
+            reverse("create_actual_income", kwargs={"period_id": self.period.budget_period_id}),
             data={
                 "name": "Work",
                 "amount": 500,
@@ -442,12 +444,12 @@ class ActualAmountViewTests(Authenticate):
 
         self.client.login(username="testUser", password="test123")
 
-        response = self.client.get(reverse("create_actual_income"))
+        response = self.client.get(reverse("create_actual_income", kwargs={"period_id": self.period.budget_period_id}))
 
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, 200)
 
         response = self.client.post(
-            reverse("create_actual_income"),
+            reverse("create_actual_income", kwargs={"period_id": self.period.budget_period_id}),
             data={
                 "name": "Work",
                 "amount": 500,
@@ -455,3 +457,5 @@ class ActualAmountViewTests(Authenticate):
                 "estimate_id": test_income.amount_id
             }
         )
+
+        self.assertEquals(response.status_code, 200)

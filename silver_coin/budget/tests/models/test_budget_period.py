@@ -71,7 +71,7 @@ class BudgetPeriodTests(Authenticate):
 
     def test_amounts(self):
         # Check that the period contains the estimates
-        estimates = self.budget_period.amount_set.all()
+        estimates = self.budget_period.amounts.all()
         self.assertEquals(estimates.count(), 3)
 
     def test_date_overlap_start_date(self):

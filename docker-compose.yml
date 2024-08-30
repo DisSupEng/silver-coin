@@ -8,7 +8,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     container_name: "budget_db"
     volumes:
-      - app_db:/var/postgres
+      - app_db:/var/lib/postgresql/data
     ports:
       - 5432:5432
   app:
@@ -27,6 +27,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DATABASE}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - TZ=Pacific/Auckland
     command: "python manage.py runserver 0.0.0.0:8000"
     # App depends on the database
     depends_on:
