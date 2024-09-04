@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ action }} {{ type }}{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/initialise_select.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title center">{{ action }} {{ type }}</span>
+                    <p>Please fill in the details below</p>
+                    {% if form.non_field_errors %}
+                        {{ form.non_field_errors }}
+                    {% endif %}
+                    {% if action == "Create" %}
+                    <form action="{% url 'create_actual_expense' period_id=period_id %}" method="post">
+                    {% else %}
+                    <form action="{% url 'edit_actual_expense' period_id=period_id pk=actualamount.actual_id %}" method="post">
+                    {% endif %}
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col s12">
+                                <label for="{{ form.name.id_for_label }}">{{ type }} Name</label>
+                                <ul>
+                                    {{ form.name.errors }}
+                                </ul>
+                                {{ form.name }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12">
+                                <label for="{{ form.occurred_on.id_for_label }}">Occurred On</label>
+                                <ul>
+                                    {{ form.occurred_on.errors }}
+                                </ul>
+                                {{ form.occurred_on }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12">
+                                <label for="{{ form.amount.id_for_label }}">{{ type }} Amount</label>
+                                <ul>
+                                    {{ form.amount.errors }}
+                                </ul>
+                                {{ form.amount }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12">
+                                <label for="{{ form.estimate.id_for_label }}">Estimate</label>
+                                <ul>
+                                    {{ form.estimate_id.errors }}
+                                </ul>
+                                {{ form.estimate_id }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s4">
+                                <a href="{% url 'actual_amount' period_id=period_id %}">
+                                    <div class="waves-effect waves-light btn blue">
+                                        Back
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col s4"></div>
+                            <div class="col s4">
+                                <button class="waves-effect waves-light btn right blue" type="submit">{{ action }} {{ type }}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

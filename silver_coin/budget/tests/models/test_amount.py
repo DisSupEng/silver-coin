@@ -1,7 +1,11 @@
+from datetime import date
 from django.core.exceptions import ValidationError
 
 from ..helpers import Authenticate
-from ..factories import AmountFactory, BudgetFactory, BudgetPeriodFactory
+from ..factories import ActualAmountFactory
+from ..factories import AmountFactory
+from ..factories import BudgetFactory
+from ..factories import BudgetPeriodFactory
 
 
 class AmountTests(Authenticate):
@@ -53,18 +57,68 @@ class AmountTests(Authenticate):
         with self.assertRaisesMessage(ValidationError, "An Amount cannot be linked to both a Budget and BudgetPeriod"):
             self.amount.full_clean()
 
-    def test_one_time_amount(self):
-        self.amount.is_one_time_cost = True
-        with self.assertRaisesMessage(ValidationError, "A one time amount must be linked to a Budget Period"):
-            self.amount.full_clean()
+class ActualAmountTests(Authenticate):
+    """
+    Tests for the ActualAmount model.
+    """
+    def setUp(self):
+        """
+        Creates a ActualAmount object for testing
+        """
+        super().setUp()
+        budget = BudgetFactory.create(owner=self.user)
+        amount = AmountFactory.create(budget=budget)
 
-        budget_period = BudgetPeriodFactory.create(budget=self.amount.budget)
-        # Create without raising a validation error
-        AmountFactory.create(
-            name="Gift",
-            amount=20.00,
-            is_one_time_cost = True,
-            budget_period=budget_period,
+        self.period = BudgetPeriodFactory.create(
+            start_date=date(2023, 6, 28),
+            budget=budget
         )
 
-        
+        self.actual_amount = ActualAmountFactory.create(
+            estimate=amount,
+            period=self.period
+        )
+
+    def test_name_blank(self):
+        self.actual_amount.name = None
+        with self.assertRaisesMessage(ValidationError, "This field cannot be null"):
+            self.actual_amount.full_clean()
+
+        self.actual_amount.name = ""
+        with self.assertRaisesMessage(ValidationError, "This field cannot be blank"):
+            self.actual_amount.full_clean()
+
+    def test_amount_blank(self):
+        self.actual_amount.amount = None
+        with self.assertRaisesMessage(ValidationError, "This field cannot be null"):
+            self.actual_amount.full_clean()
+
+    def test_amount_greater_than_zero(self):
+        self.actual_amount.amount = -1
+        with self.assertRaisesMessage(ValidationError, "Amount must be greater than zero"):
+            self.actual_amount.full_clean()
+
+        self.actual_amount.amount = 0
+        with self.assertRaisesMessage(ValidationError, "Amount must be greater than zero"):
+            self.actual_amount.full_clean()
+
+    def test_occurred_on_blank(self):
+        self.actual_amount.occurred_on = None
+        with self.assertRaisesMessage(ValidationError, "This field cannot be null"):
+            self.actual_amount.full_clean()
+
+    def test_occurred_on_greater_than_period_start(self):
+        """
+        Tests that an ActualAmount cannot occur before the period start date.
+        """
+        self.actual_amount.occurred_on = date(2023, 5, 28)
+        with self.assertRaisesMessage(ValidationError, "Occurred On must be greater than or equal to period start date"):
+            self.actual_amount.full_clean()
+    
+    def test_occurred_on_less_than_period_end(self):
+        """
+        Tests that an ActualAmount cannot occur after the period end date.
+        """
+        self.actual_amount.occurred_on = date(2023, 7, 28)
+        with self.assertRaisesMessage(ValidationError, "Occurred On must be less than or equal to the end date"):
+            self.actual_amount.full_clean()

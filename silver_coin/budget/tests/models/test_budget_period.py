@@ -32,6 +32,8 @@ class BudgetPeriodTests(Authenticate):
 
         self.budget_period = BudgetPeriodFactory.create(budget=self.budget)
 
+
+
     def test_start_date(self):
         self.budget_period.start_date = None
         with self.assertRaisesMessage(ValidationError, "This field cannot be null"):
@@ -44,40 +46,71 @@ class BudgetPeriodTests(Authenticate):
         self.budget.save()
 
 
-        self.budget_period = BudgetPeriodFactory.create(start_date=datetime.strptime("2022-08-22", "%Y-%m-%d").date(), budget=self.budget)
+        self.budget_period = BudgetPeriodFactory.create(start_date=date(2022, 8, 22), budget=self.budget)
 
-        self.assertEquals(self.budget_period.end_date, date(2022, 8, 26))
+        self.assertEquals(self.budget_period.end_date, date(2022, 8, 25))
 
     def test_end_date_weeks(self):
         self.budget.period_type = "weeks"
         self.budget.period_length = 6
         self.budget.save()
 
-        self.budget_period = BudgetPeriodFactory.create(start_date=datetime.strptime("2022-08-22", "%Y-%m-%d").date(), budget=self.budget)
+        self.budget_period = BudgetPeriodFactory.create(start_date=date(2022, 8, 22), budget=self.budget)
 
-        self.assertEquals(self.budget_period.end_date, date(2022, 10, 3))
+        self.assertEquals(self.budget_period.end_date, date(2022, 10, 2))
 
     def test_end_date_months(self):
         self.budget.period_type = "months"
         self.budget.period_length = 9
         self.budget.save()
 
-        self.budget_period = BudgetPeriodFactory.create(start_date=datetime.strptime("2022-08-22", "%Y-%m-%d").date(), budget=self.budget)
 
-        self.assertEquals(self.budget_period.end_date, date(2023, 5, 22))
+        self.budget_period = BudgetPeriodFactory.create(start_date=date(2022, 8, 22), budget=self.budget)
+
+        self.assertEquals(self.budget_period.end_date, date(2023, 5, 21))
 
     def test_is_ended(self):
         self.assertEquals(self.budget_period.is_ended(), True)
 
     def test_amounts(self):
         # Check that the period contains the estimates
-        estimates = self.budget_period.amount_set.filter(is_actual=False)
+        estimates = self.budget_period.estimates.all()
         self.assertEquals(estimates.count(), 3)
 
-        # Check that the is actual amounts are 0
-        actuals = self.budget_period.amount_set.filter(is_actual=True)
-        self.assertEquals(actuals.count(), 3)
-        # All actual amounts should be 0
-        for actual in actuals.all():
-            self.assertEquals(actual.amount, 0)
+    def test_date_overlap_start_date(self):
+        self.budget.period_type = "days"
+        self.budget.period_length = 7
+        self.budget.save()
+
+        self.budget_period.start_date = date(2023, 7, 1)
+        self.budget_period.end_date = date(2023, 7, 8)
+        self.budget_period.save()
+
+        self.assertEquals(self.budget_period.start_date, date(2023, 7, 1))
+        self.assertEquals(self.budget_period.end_date, date(2023, 7, 7))
+
+        overlapping_period = BudgetPeriodFactory.build(start_date=date(2023, 7, 2), budget=self.budget)
+
+        with self.assertRaisesMessage(ValidationError, "Budget Period overlaps with existing period, please check the dates and try again!"):
+            overlapping_period.full_clean()
+        
+    def test_date_overlap_end_date(self):
+        self.budget.period_type = "days"
+        self.budget.period_length = 7
+        self.budget.save()
+
+        self.budget_period.start_date = date(2023, 7, 1)
+        self.budget_period.end_date = date(2023, 7, 8)
+        self.budget_period.save()
+
+        self.assertEquals(self.budget_period.start_date, date(2023, 7, 1))
+        self.assertEquals(self.budget_period.end_date, date(2023, 7, 7))
+
+        overlapping_period = BudgetPeriodFactory.build(
+            start_date=date(2023, 6, 30), 
+            budget=self.budget
+        )
+
+        with self.assertRaisesMessage(ValidationError, "Budget Period overlaps with existing period, please check the dates and try again!"):
+            overlapping_period.full_clean()
     

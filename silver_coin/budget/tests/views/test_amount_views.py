@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.urls import reverse
 
 from ..helpers import Authenticate
 
 from ..factories import BudgetFactory
+from ..factories import BudgetPeriodFactory
 from ..factories import AmountFactory
 
 from ...models import Amount
@@ -337,3 +340,122 @@ class AmountViewTests(Authenticate):
         response = self.client.post(reverse("delete_expense", kwargs={"pk": test_expense.amount_id}))
         self.assertEquals(response.status_code, 404)
 
+class ActualAmountViewTests(Authenticate):
+    """
+    Tests for the ActualAmount views.
+    """
+    def setUp(self):
+        """
+        Creates a budget and amount to test the actual amount views.
+        """
+        super().setUp()
+        self.budget = BudgetFactory.create(owner=self.user)
+        self.amount = AmountFactory.create(
+            name="Food",
+            budget=self.budget,
+            amount_type="EX"
+        )
+        self.period = BudgetPeriodFactory.create(
+            start_date=datetime.strptime("2023-06-26", "%Y-%M-%d").date(),
+            budget=self.budget
+        )
+
+        self.second_user = User.objects.create(username="testUser2")
+        self.second_user.set_password("test123")
+        self.second_user.save()
+
+    def test_create_expense_view_redirect_unauthorised(self):
+        """
+        Tests that the user is redirected to the login screen if they are unauthorised when creating an expense.
+        """
+        response = self.client.get(reverse("create_actual_expense", kwargs={"period_id": self.period.budget_period_id}))
+
+        self.assertEquals(response.status_code, 302)
+
+        response = self.client.post(
+            reverse("create_actual_expense", kwargs={"period_id": self.period.budget_period_id}),
+            data={
+                "name": "Countdown",
+                "amount": 32.65,
+                "occurred_on": datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
+                "estimate_id": self.amount.amount_id
+            }
+        )
+
+        self.assertEquals(response.status_code, 302)
+
+    def test_create_expense_view(self):
+        """
+        Tests that the user can create an expense.
+        """
+        self.client.login(username="testUser", password="test123")
+
+        response = self.client.get(reverse("create_actual_expense", kwargs={"period_id": self.period.budget_period_id}))
+
+        self.assertEquals(response.status_code, 200)
+
+        response = self.client.post(
+            reverse("create_actual_expense", kwargs={"period_id": self.period.budget_period_id}),
+            data={
+                "name": "Countdown",
+                "amount": 32.65,
+                "occurred_on": datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
+                "estimate_id": self.amount.amount_id
+            }
+        )
+
+        self.assertEquals(response.status_code, 200)
+
+    def test_create_income_view_redirect_unauthorised(self):
+        """
+        Tests that the user is redirected to the login screen if they are unauthorised when creating an income.
+        """
+        test_income = AmountFactory.create(
+            name="Work",
+            amount=500,
+            amount_type="IN"
+        )
+
+        response = self.client.get(reverse("create_actual_income", kwargs={"period_id": self.period.budget_period_id}))
+
+        self.assertEquals(response.status_code, 302)
+
+        response = self.client.post(
+            reverse("create_actual_income", kwargs={"period_id": self.period.budget_period_id}),
+            data={
+                "name": "Work",
+                "amount": 500,
+                "occurred_on": datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
+                "estimate_id": test_income.amount_id
+            }
+        )
+
+        self.assertEquals(response.status_code, 302)
+
+    def test_create_income_view(self):
+        """
+        Tests that the user can create an income.
+        """
+        test_income = AmountFactory.create(
+            name="Work",
+            amount=500,
+            amount_type="IN"
+        )
+
+        self.client.login(username="testUser", password="test123")
+
+        response = self.client.get(reverse("create_actual_income", kwargs={"period_id": self.period.budget_period_id}))
+
+        self.assertEquals(response.status_code, 200)
+
+        response = self.client.post(
+            reverse("create_actual_income", kwargs={"period_id": self.period.budget_period_id}),
+            data={
+                "name": "Work",
+                "amount": 500,
+                "occurred_on": datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
+                "estimate_id": test_income.amount_id
+            }
+        )
+
+        self.assertEquals(response.status_code, 200)

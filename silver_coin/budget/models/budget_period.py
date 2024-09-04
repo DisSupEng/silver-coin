@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime, timedelta
 
@@ -22,21 +24,34 @@ class BudgetPeriod(models.Model):
     # Actual Incomes are defined on the Amount model
     budget = models.ForeignKey("Budget", null=False, blank=False, db_column="budget", on_delete=models.CASCADE, verbose_name="Budget")
 
+    def full_clean(self, exclude=None, validate_unique=True):
+        super().full_clean(exclude=["end_date"])
+        end_date = self.calculate_end_date()
+
+        # If we are editing an existing period exclude the current model instance
+        if self.budget_period_id:
+            # Once the dates are calculated, double check that there are no overlapping periods
+            overlapping_count = BudgetPeriod.objects.filter(
+                ~Q(budget_period_id=self.budget_period_id),
+                Q(start_date__lte=self.start_date, end_date__gt=self.start_date) |
+                Q(start_date__lte=end_date, end_date__gt=end_date)
+            ).count()
+        else:
+            # Once the dates are calculated, double check that there are no overlapping periods
+            overlapping_count = BudgetPeriod.objects.filter(
+                Q(start_date__lte=self.start_date, end_date__gt=self.start_date) |
+                Q(start_date__lte=end_date, end_date__gt=end_date)
+            ).count()
+        if overlapping_count > 0:
+            raise ValidationError("Budget Period overlaps with existing period, please check the dates and try again!")
+        
+        return None
+
     def save(self, *args, **kwargs):
-        # Only set the end date and create amounts if it is the first time saving
+        self.end_date = self.calculate_end_date()
+
+        # Only create amounts if it is the first time saving
         if self._state.adding:
-            period_length = self.budget.period_length
-            start_datetime = datetime.combine(self.start_date, datetime.min.time())
-
-            if self.budget.period_type == DAYS:
-                self.end_date = (start_datetime + relativedelta(days=period_length)).date()
-            elif self.budget.period_type == WEEKS:
-                self.end_date = (start_datetime + relativedelta(weeks=period_length)).date()
-            else:
-                # Timedelta can't do months, calculate using weeks instead
-                self.end_date = (start_datetime + relativedelta(months=period_length)).date()
-            
-
             super().save(*args, **kwargs)
 
             # Create the Incomes and Expense for this Budget Period
@@ -44,15 +59,64 @@ class BudgetPeriod(models.Model):
             for cost in costs.all():
                 # Copy the estimates from the budget as they are currently
                 Amount.objects.create_amount(cost, self)
-                # Create the actual amount, set to 0. These will be adjusted as the costs come in
-                Amount.objects.create_amount(cost, self, True)
             
             return None
         else:
             return super().save(*args, **kwargs)
+        
+    def calculate_end_date(self):
+        """
+        Method calculates when the end date of the BudgetPeriod will be.
+        """
+        period_length = self.budget.period_length
+        start_datetime = datetime.combine(self.start_date, datetime.min.time())
+        end_date = None
+
+        if self.budget.period_type == DAYS:
+            end_date = (start_datetime + relativedelta(days=period_length) - relativedelta(days=1)).date()
+        elif self.budget.period_type == WEEKS:
+            end_date = (start_datetime + relativedelta(weeks=period_length) - relativedelta(days=1)).date()
+        else:
+            end_date = (start_datetime + relativedelta(months=period_length) - relativedelta(days=1)).date()
+
+        return end_date
 
     def is_ended(self):
         """
         Returns if the Budget period has ended.
         """
         return self.end_date < timezone.now().date()
+    
+    def total_income(self):
+        """
+        Returns the total income.
+        """
+        return sum([income.amount for income in self.amounts.filter(estimate__amount_type="IN")])
+    
+    def total_expense(self):
+        """
+        Returns the total expense.
+        """
+        return sum([expense.amount for expense in self.amounts.filter(estimate__amount_type="EX")])
+    
+    def net_amount(self):
+        """
+        The estimated NET amount of the budget.
+        """
+        return self.total_income() - self.total_expense()
+    
+    def summary_by_group(self, is_expense):
+        """
+        Returns a dictionary containing the amount for each amount type.
+
+        :param: is_expense, if the amount is an expense
+
+        :returns: a dictionary containing the sum for each amount
+        """
+        amount_type = "EX" if is_expense else "IN"
+        sums = {}
+        for amount in Amount.objects.filter(budget_period=self, amount_type=amount_type):
+            amount_sum = sum([actual.amount for actual in self.amounts.filter(estimate__amount_type=amount_type)])
+            name = amount.name
+            sums[name] = amount_sum
+        return sums
