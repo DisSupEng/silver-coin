@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from django.core.exceptions import ValidationError
 
 from ..helpers import Authenticate
@@ -70,7 +70,7 @@ class ActualAmountTests(Authenticate):
         amount = AmountFactory.create(budget=budget)
 
         self.period = BudgetPeriodFactory.create(
-            start_date=datetime.strptime("2023-06-28", "%Y-%M-%d").date(),
+            start_date=date(2023, 6, 28),
             budget=budget
         )
 
@@ -108,11 +108,17 @@ class ActualAmountTests(Authenticate):
             self.actual_amount.full_clean()
 
     def test_occurred_on_greater_than_period_start(self):
-        self.actual_amount.occurred_on = datetime.strptime("2023-05-28", "%Y-%M-%d").date()
+        """
+        Tests that an ActualAmount cannot occur before the period start date.
+        """
+        self.actual_amount.occurred_on = date(2023, 5, 28)
         with self.assertRaisesMessage(ValidationError, "Occurred On must be greater than or equal to period start date"):
             self.actual_amount.full_clean()
     
     def test_occurred_on_less_than_period_end(self):
-        self.actual_amount.occurred_on = datetime.strptime("2023-06-05", "%Y-%M-%d").date()
-        with self.assertRaisesMessage(ValidationError, "Occurred On must be less than end date"):
+        """
+        Tests that an ActualAmount cannot occur after the period end date.
+        """
+        self.actual_amount.occurred_on = date(2023, 7, 28)
+        with self.assertRaisesMessage(ValidationError, "Occurred On must be less than or equal to the end date"):
             self.actual_amount.full_clean()

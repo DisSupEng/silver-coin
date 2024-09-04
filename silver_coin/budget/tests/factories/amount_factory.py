@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from factory.django import DjangoModelFactory
 from ...models import Amount
 from ...models import ActualAmount
@@ -26,6 +26,6 @@ class ActualAmountFactory(DjangoModelFactory):
     
     name = "Countdown"
     amount = "25.76"
-    occurred_on = datetime.strptime("2023-06-28", "%Y-%M-%d").date()
+    occurred_on = date(2023, 6, 28)
     estimate = None
     period = None
