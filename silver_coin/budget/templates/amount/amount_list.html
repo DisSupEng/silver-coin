@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block content %}
     <div class="row">
@@ -28,7 +29,7 @@
                                 {% for income in incomes %}
                                     <tr>
                                         <th>{{ income.name }}</th>
-                                        <th>${{ income.amount }}</th>
+                                        <th>${{ income.amount|intcomma }}</th>
                                         <th>{{ income.income_percentage }}%</th>
                                         <th><a href="{% url 'edit_income' pk=income.amount_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
                                         <th><a href="{% url 'delete_income' pk=income.amount_id %}" class="waves-effect waves-light btn red">Delete</a></th>
@@ -38,7 +39,7 @@
                         </table>
                         <div class="row">
                             <div class="col s12">
-                                <h5 class="right">Total Income: ${{ total_income }}</h5>
+                                <h5 class="right">Total Income: ${{ total_income|intcomma }}</h5>
                             </div>
                         </div>
                     {% else %}
@@ -76,7 +77,7 @@
                             {% for expense in expenses %}
                                 <tr>
                                     <th>{{ expense.name }}</th>
-                                    <th>${{ expense.amount }}</th>
+                                    <th>${{ expense.amount|intcomma }}</th>
                                     <th>{{ expense.income_percentage }}%</th>
                                     <th><a href="{% url 'edit_expense' pk=expense.amount_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
                                     <th><a href="{% url 'delete_expense' pk=expense.amount_id %}" class="waves-effect waves-light btn red">Delete</a></th>
@@ -86,7 +87,7 @@
                     </table>
                     <div class="row">
                         <div class="col s12">
-                            <h5 class="right">Total Expenses: ${{ total_expense }}</h5>
+                            <h5 class="right">Total Expenses: ${{ total_expense|intcomma }}</h5>
                         </div>
                     </div>
                     {% else %}
@@ -101,7 +102,7 @@
         <div class="col s12">
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title center">NET Amount: <span {% if net_amount > 0 %}class="positive_net"{% else %}class="positive_net"{% endif %}>${{ net_amount }}</span></span>
+                    <span class="card-title center">NET Amount: <span {% if net_amount > 0 %}class="positive-net"{% else %}class="negative-net"{% endif %}>${{ net_amount }}</span></span>
                 </div>
             </div>
         </div>
