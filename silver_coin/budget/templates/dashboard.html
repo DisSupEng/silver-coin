@@ -22,7 +22,7 @@
             <div class="card">
                 <div class="card-content">
                     <span class="card-title center">Dashboard</span>
-                    {% if has_budget %}
+                    {% if recent_net_amount %}
                         <span class="card-title center">NET Amount: <span {% if recent_net_amount > 0 %}class="positive-net"{% else %}class="negative-net"{% endif %}>${{ recent_net_amount|intcomma }}</span></span>
                     {% else %}
                         <div class="row">
