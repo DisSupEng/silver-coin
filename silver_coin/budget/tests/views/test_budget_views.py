@@ -16,7 +16,7 @@ class BudgetCreateView(Authenticate):
     def test_budget_create_get(self):
         response = self.client.get(reverse("create_budget"))
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         # Core budget attributes
         self.assertContains(response, "name=\"name\"")
         self.assertContains(response, "name=\"description\"")
