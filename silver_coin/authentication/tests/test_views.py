@@ -17,7 +17,7 @@ class IndexTests(ClientSetup):
         """
         response = self.client.get(reverse("index"))
         
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Login")
         self.assertContains(response, "Sign Up")
 
@@ -31,7 +31,7 @@ class SignUpTests(ClientSetup):
         """
         response = self.client.get(reverse("signup"))
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Username")
         self.assertContains(response, "Email"),
         self.assertContains(response, "Password")
@@ -49,7 +49,7 @@ class SignUpTests(ClientSetup):
         }
         response = self.client.post(reverse("signup"), data=signup_data)
 
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
 class LoginTests(ClientSetup):
     """
@@ -61,7 +61,7 @@ class LoginTests(ClientSetup):
         """      
         response = self.client.get(reverse("login"))
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Username")
         self.assertContains(response, "Password")
 
@@ -73,7 +73,7 @@ class LoginTests(ClientSetup):
         self.client.force_login(user=user)
         # Test that the user is redirected
         response = self.client.get(reverse("login"))
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("dashboard"))
 
     def test_login_post(self):
@@ -91,4 +91,4 @@ class LoginTests(ClientSetup):
 
         response = self.client.post(reverse("login"), data=login_data)
 
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)

@@ -20,7 +20,7 @@ class DashboardTests(Authenticate):
 
         response = self.client.get(reverse("dashboard"))
 
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_dashboard_cards(self):
         response = self.client.get(reverse("dashboard"))
