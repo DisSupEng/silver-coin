@@ -7,7 +7,7 @@ from django.urls import reverse, reverse_lazy
 from ..forms import BudgetPeriodForm, BudgetPeriodModelForm
 from ..models import BudgetPeriod, Budget
 
-class BudgetPeriodList(ListView):
+class BudgetPeriodList(LoginRequiredMixin, ListView):
     """
     Lists the BudgetPeriod for the user's Budget.
     """
@@ -51,7 +51,7 @@ class CreateBudgetPeriod(LoginRequiredMixin, FormView):
         else:
             return self.form_invalid(form)
         
-class EditBudgetPeriod(UpdateView):
+class EditBudgetPeriod(LoginRequiredMixin, UpdateView):
     """
     A view for editing the user's budget period.
     """
@@ -62,7 +62,7 @@ class EditBudgetPeriod(UpdateView):
     context_object_name = "budget_period"
     extra_context = {"action": "Edit"}
         
-class DeleteBudgetPeriod(DeleteView):
+class DeleteBudgetPeriod(LoginRequiredMixin, DeleteView):
     """
     A view for deleting the user's budget period.
     """
