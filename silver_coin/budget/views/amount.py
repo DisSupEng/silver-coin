@@ -18,6 +18,7 @@ from ..models import Budget
 from ..models import BudgetPeriod
 from ..models import Amount
 from ..models import ActualAmount
+from ..models import Goal
 
 from .mixins import CheckBudgetExists
 
@@ -48,10 +49,12 @@ class AmountList(LoginRequiredMixin, ListView):
         total_income = sum([income.amount for income in incomes])
         expenses = amounts.filter(amount_type="EX")
         total_expense = sum([expense.amount for expense in expenses])
+        goals = Budget.objects.get(owner=self.request.user).goals
         return super().get_context_data(
             **kwargs, 
             incomes=incomes, 
-            expenses=expenses, 
+            expenses=expenses,
+            goals=goals,
             total_income=total_income, 
             total_expense=total_expense,
             net_amount=Budget.objects.get(owner=self.request.user).net_amount(),

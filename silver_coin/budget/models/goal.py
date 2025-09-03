@@ -28,8 +28,7 @@ class Goal(models.Model):
     savings = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
     amount = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
     expected_contribution = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
-    budget = models.ForeignKey(Budget, on_delete=models.CASCADE, null=False, blank=False)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
+    budget = models.ForeignKey(Budget, related_name="goals", on_delete=models.CASCADE, null=False, blank=False)
 
     @property
     def is_complete(self) -> bool:
