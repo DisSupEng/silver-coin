@@ -19,6 +19,8 @@ from ..models import BudgetPeriod
 from ..models import Amount
 from ..models import ActualAmount
 
+from .mixins import CheckBudgetExists
+
 class AmountList(LoginRequiredMixin, ListView):
     """
     Displays the Incomes and Expenses.
@@ -55,24 +57,6 @@ class AmountList(LoginRequiredMixin, ListView):
             net_amount=Budget.objects.get(owner=self.request.user).net_amount(),
             page_title="Amounts"
         )
-    
-class CheckBudgetExists():
-    """
-    A Mixin that checks if the user has a Budget.
-
-    Will redirect to the dashboard if they don't.
-    """
-
-    def dispatch(self, request, *args, **kwargs):
-        """
-        Override to check the user has a Budget.
-        """
-        try:
-            Budget.objects.get(owner=request.user)
-        except Budget.DoesNotExist:
-            return redirect(reverse("dashboard"))
-
-        return super().dispatch(request, *args, **kwargs)
     
 class CreateIncome(LoginRequiredMixin, CheckBudgetExists, FormView):
     """

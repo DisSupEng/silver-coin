@@ -5,3 +5,4 @@ from .amount import ActualAmountModelForm
 from .budget import BudgetForm
 from .budget import BudgetModelForm
 from .budget_period import BudgetPeriodForm, BudgetPeriodModelForm
+from .goal import GoalForm
