@@ -3,7 +3,7 @@ from django.core.validators import MaxLengthValidator
 from django.contrib.auth.models import User
 from django.db import models
 
-from budget.models import Budget
+from budget.models import Budget, BudgetPeriod
 
 class Goal(models.Model):
     """
@@ -37,6 +37,18 @@ class Goal(models.Model):
         """
         return self.savings >= self.amount
 
+    @property
+    def income_percentage(self) -> float:
+        """
+        The percentage of the income that the Goal contribution takes up.
+        """
+        income = self.budget.total_income()
+        if income != 0:
+            percentage = (self.expected_contribution / income) * 100
+            return "{:0.2f}".format(percentage)
+        else:
+            return "N/A"
+
     def full_clean(self, *args, **kwargs):
         """
         Check that the dollar amounts cannot be less than zero.
@@ -49,3 +61,15 @@ class Goal(models.Model):
             raise ValidationError("Amount cannot be less than or equal to zero")
         if self.expected_contribution <= 0:
             raise ValidationError("Expected Contribution cannot be less than or equal to zero")
+
+class Contribution(models.Model):
+    """
+    A Contribution is linked to a particular Goal and contains the following fields:
+    * amount: The amount that is being contributed to the Goal
+    * goal: The goal that this Contribution is linked to
+    * budget_period: The BudgetPeriod that this Contribution is linked to
+    """
+    contribution_id = models.AutoField(primary_key=True)
+    amount = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
+    goal = models.ForeignKey(Goal, on_delete=models.CASCADE, null=False, blank=False)
+    budget_period = models.ForeignKey(BudgetPeriod, on_delete=models.CASCADE, null=False, blank=False)

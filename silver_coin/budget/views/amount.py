@@ -49,7 +49,8 @@ class AmountList(LoginRequiredMixin, ListView):
         total_income = sum([income.amount for income in incomes])
         expenses = amounts.filter(amount_type="EX")
         total_expense = sum([expense.amount for expense in expenses])
-        goals = Budget.objects.get(owner=self.request.user).goals
+        goals = Budget.objects.get(owner=self.request.user).goals.all()
+        total_goal = sum([goal.expected_contribution for goal in goals])
         return super().get_context_data(
             **kwargs, 
             incomes=incomes, 
@@ -57,8 +58,9 @@ class AmountList(LoginRequiredMixin, ListView):
             goals=goals,
             total_income=total_income, 
             total_expense=total_expense,
+            total_goal=total_goal,
             net_amount=Budget.objects.get(owner=self.request.user).net_amount(),
-            page_title="Amounts"
+            page_title="Amounts",
         )
     
 class CreateIncome(LoginRequiredMixin, CheckBudgetExists, FormView):

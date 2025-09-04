@@ -134,7 +134,7 @@
                                     <th>${{ goal.amount|intcomma }}</th>
                                     <th>${{ goal.expected_contribution }}</th>
                                     <th>{{ goal.income_percentage }}%</th>
-                                    <th><a href="#" class="waves-effect waves-light btn blue">Edit</a></th>
+                                    <th><a href="{% url 'edit_goal' pk=goal.goal_id %}" class="waves-effect waves-light btn blue">Edit</a></th>
                                     <th><a href="#" class="waves-effect waves-light btn red">Delete</a></th>
                                 </tr>
                             {% endfor %}
@@ -142,7 +142,7 @@
                     </table>
                     <div class="row">
                         <div class="col s12">
-                            <h5 class="right">Total Goals: $</h5>
+                            <h5 class="right">Total Goals: ${{ total_goal|intcomma }}</h5>
                         </div>
                     </div>
                     {% else %}
