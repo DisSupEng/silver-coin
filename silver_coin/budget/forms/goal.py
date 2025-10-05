@@ -10,5 +10,5 @@ class GoalForm(forms.ModelForm):
     """
     class Meta:
         model = Goal
-        fields = ["name", "savings", "amount", "expected_contribution"]
+        fields = ["name", "amount", "expected_contribution"]
     

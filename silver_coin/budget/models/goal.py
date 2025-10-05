@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.contrib.auth.models import User
@@ -12,7 +14,6 @@ class Goal(models.Model):
 
     The model contains the following fields:
     * name: The name of the Goal
-    * savings: The current amount that has been saved for this Goal
     * amount: The total cost of this Goal
     * expected_contribution: The amount expected to be saved each BudgetPeriod
     * budget: The budget that the goal is attached to
@@ -25,10 +26,16 @@ class Goal(models.Model):
         null=False,
         blank=False
     )
-    savings = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
     amount = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
     expected_contribution = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
     budget = models.ForeignKey(Budget, related_name="goals", on_delete=models.CASCADE, null=False, blank=False)
+
+    @property
+    def savings(self) -> float:
+        """
+        Returns the total amount that has been saved for this goal
+        """
+        return sum([contribution.amount for contribution in self.contributions.all()])
 
     @property
     def is_complete(self) -> bool:
@@ -55,8 +62,6 @@ class Goal(models.Model):
         """
         super().full_clean(*args, **kwargs)
 
-        if self.savings < 0:
-            raise ValidationError("Savings cannot be less than zero")
         if self.amount <= 0:
             raise ValidationError("Amount cannot be less than or equal to zero")
         if self.expected_contribution <= 0:
@@ -71,5 +76,6 @@ class Contribution(models.Model):
     """
     contribution_id = models.AutoField(primary_key=True)
     amount = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
-    goal = models.ForeignKey(Goal, on_delete=models.CASCADE, null=False, blank=False)
+    occurred_on = models.DateField(null=False, blank=False, default=datetime.now)
+    goal = models.ForeignKey(Goal, on_delete=models.CASCADE, null=False, blank=False, related_name="contributions")
     budget_period = models.ForeignKey(BudgetPeriod, on_delete=models.CASCADE, null=False, blank=False)
