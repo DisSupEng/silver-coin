@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxLengthValidator
+from django.core.validators import MaxLengthValidator, MinValueValidator
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -21,13 +21,25 @@ class Goal(models.Model):
     """
     goal_id = models.AutoField(primary_key=True)
     name = models.CharField(
-        max_length=50,
         validators=[MaxLengthValidator(50, "Name cannot be greater than 50 characters")],
+        max_length=50,
         null=False,
         blank=False
     )
-    amount = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
-    expected_contribution = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
+    amount = models.DecimalField(
+        validators=[MinValueValidator(1, "Amount must be greater than zero")],
+        max_digits=7,
+        decimal_places=2,
+        null=False,
+        blank=False
+    )
+    expected_contribution = models.DecimalField(
+        validators=[MinValueValidator(1, "Expected contribution must be greater than zero")],
+        max_digits=7,
+        decimal_places=2,
+        null=False,
+        blank=False
+    )
     budget = models.ForeignKey(Budget, related_name="goals", on_delete=models.CASCADE, null=False, blank=False)
 
     @property
