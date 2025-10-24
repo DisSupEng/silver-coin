@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator, MinValueValidator
 from django.contrib.auth.models import User
@@ -87,7 +88,27 @@ class Contribution(models.Model):
     * budget_period: The BudgetPeriod that this Contribution is linked to
     """
     contribution_id = models.AutoField(primary_key=True)
-    amount = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
+    amount = models.DecimalField(
+        validators=[MinValueValidator(0.1, "Amount must be greater than or equal to 0.1")],
+        max_digits=7,
+        decimal_places=2,
+        null=False,
+        blank=False
+    )
     occurred_on = models.DateField(null=False, blank=False, default=datetime.now)
     goal = models.ForeignKey(Goal, on_delete=models.CASCADE, null=False, blank=False, related_name="contributions")
     budget_period = models.ForeignKey(BudgetPeriod, on_delete=models.CASCADE, null=False, blank=False)
+
+    def full_clean(self, *args, **kwargs):
+        """
+        A Contribution must occur within the dates for the BudgetPeriod.
+        """
+        super().full_clean(*args, **kwargs)
+
+        start_date = self.budget_period.start_date
+        end_date = self.budget_period.end_date
+        
+        if self.occurred_on < start_date:
+            raise ValidationError("Occurred On must be greater than or equal to period start date")
+        elif self.occurred_on > end_date:
+            raise ValidationError("Occurred On must be less than or equal to the end date")
