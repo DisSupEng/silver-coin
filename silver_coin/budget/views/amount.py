@@ -52,7 +52,8 @@ class AmountList(LoginRequiredMixin, ListView):
             expenses=expenses, 
             total_income=total_income, 
             total_expense=total_expense,
-            net_amount=Budget.objects.get(owner=self.request.user).net_amount()
+            net_amount=Budget.objects.get(owner=self.request.user).net_amount(),
+            page_title="Amounts"
         )
     
 class CheckBudgetExists():
@@ -80,7 +81,7 @@ class CreateIncome(LoginRequiredMixin, CheckBudgetExists, FormView):
     form_class = AmountForm
     success_url = reverse_lazy("amount")
     template_name = "amount/income_form.html"
-    extra_context = {"action": "Create", "type": "Income"}
+    extra_context = {"action": "Create", "type": "Income", "page_title": "Create Income"}
 
     def get_login_url(self):
         return reverse("login")
@@ -171,7 +172,7 @@ class EditIncome(CheckOwner, LoginRequiredMixin, UpdateView):
     form_class = IncomeForm
     success_url = reverse_lazy("amount")
     template_name = "amount/income_form.html"
-    extra_context = {"action": "Edit", "type": "Income"}
+    extra_context = {"action": "Edit", "type": "Income", "page_title": "Edit Income"}
 
     def get_queryset(self):
         """
@@ -191,7 +192,7 @@ class DeleteIncome(CheckOwner, LoginRequiredMixin, DeleteView):
     model = Amount
     success_url = reverse_lazy("amount")
     template_name = "amount/amount_delete.html"
-    extra_context = {"type": "Income"}
+    extra_context = {"type": "Income", "page_title": "Delete Income"}
     
     def get_queryset(self):
         """
@@ -208,7 +209,7 @@ class CreateExpense(LoginRequiredMixin, CheckBudgetExists, FormView):
     form_class = AmountForm
     success_url = reverse_lazy("amount")
     template_name = "amount/expense_form.html"
-    extra_context = {"action": "Create", "type": "Expense"}
+    extra_context = {"action": "Create", "type": "Expense", "page_title": "Create Expense"}
 
     def get_login_url(self):
         return reverse("login")
@@ -244,7 +245,7 @@ class EditExpense(CheckOwner, LoginRequiredMixin, UpdateView):
     form_class = IncomeForm
     success_url = reverse_lazy("amount")
     template_name = "amount/expense_form.html"
-    extra_context = {"action": "Edit", "type": "Expense"}
+    extra_context = {"action": "Edit", "type": "Expense", "page_title": "Edit Expense"}
 
     def get_queryset(self):
         """
@@ -264,7 +265,7 @@ class DeleteExpense(LoginRequiredMixin, DeleteView):
     model = Amount
     success_url = reverse_lazy("amount")
     template_name = "amount/amount_delete.html"
-    extra_context = {"type": "Expense"}
+    extra_context = {"type": "Expense", "page_title": "Delete Expense"}
     
     def get_queryset(self):
         """
@@ -306,6 +307,7 @@ class ActualAmountList(LoginRequiredMixin, ListView):
             total_income=total_income, 
             total_expense=total_expense,
             net_amount=total_income - total_expense,
+            page_title="Actual Amounts"
         )
     
     def get(self, request, *args, **kwargs):
@@ -408,7 +410,8 @@ class CreateActualIncome(LoginRequiredMixin, FormView):
             **kwargs,
             period_id=self.kwargs["period_id"],
             action="Create",
-            type="Income"
+            type="Income",
+            page_title="Create Actual Income",
         )
 
         form = context["form"]
@@ -478,7 +481,8 @@ class EditActualIncome(LoginRequiredMixin, UpdateView):
             **kwargs,
             period_id=self.kwargs["period_id"],
             action="Edit",
-            type="Income"
+            type="Income",
+            page_title="Edit Actual Income",
         )
 
         form = context["form"]
@@ -534,7 +538,7 @@ class DeleteActualIncome(LoginRequiredMixin, DeleteView):
     model = ActualAmount
     template_name = "amount/actual_amount_delete.html"
     context_object_name = "actual_amount"
-    extra_context = {"type": "Income"}
+    extra_context = {"type": "Income", "page_title": "Delete Actual Income"}
     
     def get_queryset(self):
         """
@@ -564,7 +568,8 @@ class CreateActualExpense(LoginRequiredMixin, FormView):
             **kwargs,
             period_id=self.kwargs["period_id"],
             action="Create",
-            type="Expense"
+            type="Expense",
+            page_title="Add Actual Expense",
         )
 
         form = context["form"]
@@ -634,7 +639,8 @@ class EditActualExpense(LoginRequiredMixin, UpdateView):
             **kwargs,
             period_id=self.kwargs["period_id"],
             action="Edit",
-            type="Income"
+            type="Expense",
+            page_title="Edit Actual Expense",
         )
 
         form = context["form"]
@@ -690,7 +696,7 @@ class DeleteActualExpense(LoginRequiredMixin, DeleteView):
     model = ActualAmount
     template_name = "amount/actual_amount_delete.html"
     context_object_name = "actual_amount"
-    extra_context = {"type": "Expense"}
+    extra_context = {"type": "Expense", "page_title": "Delete Actual Expense"}
     
     def get_queryset(self):
         """

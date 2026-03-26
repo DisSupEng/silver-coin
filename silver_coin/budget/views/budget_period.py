@@ -14,6 +14,7 @@ class BudgetPeriodList(LoginRequiredMixin, ListView):
     model = BudgetPeriod
     template_name = "budget_period/budget_period_list.html"
     context_object_name = "budget_periods"
+    extra_context = {"page_title": "Budget Periods"}
 
     def get_login_url(self):
         return reverse("login")
@@ -32,7 +33,7 @@ class CreateBudgetPeriod(LoginRequiredMixin, FormView):
     form_class = BudgetPeriodForm
     template_name = "budget_period/budget_period_form.html"
     success_url = reverse_lazy("budget_period")
-    extra_context = {"action": "Create"}
+    extra_context = {"action": "Create", "page_title": "Create Period"}
 
     def post(self, request, *args, **kwargs):
         owner = request.user
@@ -60,7 +61,7 @@ class EditBudgetPeriod(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("budget_period")
     model = BudgetPeriod
     context_object_name = "budget_period"
-    extra_context = {"action": "Edit"}
+    extra_context = {"action": "Edit", "page_title": "Edit Period"}
         
 class DeleteBudgetPeriod(LoginRequiredMixin, DeleteView):
     """
@@ -70,3 +71,4 @@ class DeleteBudgetPeriod(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("budget_period")
     model = BudgetPeriod
     context_object_name = "budget_period"
+    extra_context = {"page_title": "Delete Period"}
