@@ -22,3 +22,35 @@ within the timeframe of the `Budget Period` you are adding it to.
 ## Getting started
 
 **Note: This application has been developed in Linux and may not work as expected on other operating systems.**
+
+### Setting up the application
+
+This application can currently only be run locally using Docker. Please ensure you have docker installed before continuing.
+Please also ensure that you have Python installed.
+
+Clone the repository to a directory on your machine, navigate to that directory in the terminal.
+
+You need to create a `.env` file in the root directory of the project with the following lines (Please replace the values inside <> with values your own values and remove <>).
+```
+DJANGO_SECRET_KEY=""
+POSTGRES_DATABASE="<my_budget_database>"
+POSTGRES_USER="<database_user_example>"
+POSTGRES_PASSWORD="<database_password_example>"
+```
+
+Next we need to generate a secret key for Django. This can be done by installing Django in a virtual environment and generating a secret key.
+```
+python3 -m venv <path_of_new_venv>
+. ./<path_of_new_venv>/bin/activate
+pip install ./requirements.txt
+python3
+> from django.core.management.utils import get_random_secret_key
+> get_random_secret_key()
+```
+
+Please copy and paste the value returned from the function and put it into the `DJANGO_SECRET_KEY` value above.
+
+```
+docker compose build
+docker compose up
+```
