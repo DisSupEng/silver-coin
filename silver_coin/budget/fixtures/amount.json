@@ -1,0 +1,233 @@
+[
+    {
+        "model": "budget.amount",
+        "pk": 1,
+        "fields": {
+            "name": "Work",
+            "amount_type": "IN",
+            "amount": "800.00",
+            "budget": 1,
+            "budget_period": null
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 2,
+        "fields": {
+            "name": "Food",
+            "amount_type": "EX",
+            "amount": "120.00",
+            "budget": 1,
+            "budget_period": null
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 3,
+        "fields": {
+            "name": "Power",
+            "amount_type": "EX",
+            "amount": "28.00",
+            "budget": 1,
+            "budget_period": null
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 4,
+        "fields": {
+            "name": "Internet",
+            "amount_type": "EX",
+            "amount": "30.00",
+            "budget": 1,
+            "budget_period": null
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 5,
+        "fields": {
+            "name": "Rent",
+            "amount_type": "EX",
+            "amount": "350.00",
+            "budget": 1,
+            "budget_period": null
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 6,
+        "fields": {
+            "name": "Insurance",
+            "amount_type": "EX",
+            "amount": "10.00",
+            "budget": 1,
+            "budget_period": null
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 7,
+        "fields": {
+            "name": "Savings",
+            "amount_type": "EX",
+            "amount": "200.00",
+            "budget": 1,
+            "budget_period": null
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 8,
+        "fields": {
+            "name": "Work",
+            "amount_type": "IN",
+            "amount": "800.00",
+            "budget": null,
+            "budget_period": 1
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 9,
+        "fields": {
+            "name": "Food",
+            "amount_type": "EX",
+            "amount": "120.00",
+            "budget": null,
+            "budget_period": 1
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 10,
+        "fields": {
+            "name": "Power",
+            "amount_type": "EX",
+            "amount": "28.00",
+            "budget": null,
+            "budget_period": 1
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 11,
+        "fields": {
+            "name": "Internet",
+            "amount_type": "EX",
+            "amount": "30.00",
+            "budget": null,
+            "budget_period": 1
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 12,
+        "fields": {
+            "name": "Rent",
+            "amount_type": "EX",
+            "amount": "350.00",
+            "budget": null,
+            "budget_period": 1
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 13,
+        "fields": {
+            "name": "Insurance",
+            "amount_type": "EX",
+            "amount": "10.00",
+            "budget": null,
+            "budget_period": 1
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 14,
+        "fields": {
+            "name": "Savings",
+            "amount_type": "EX",
+            "amount": "200.00",
+            "budget": null,
+            "budget_period": 1
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 15,
+        "fields": {
+            "name": "Work",
+            "amount_type": "IN",
+            "amount": "800.00",
+            "budget": null,
+            "budget_period": 2
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 16,
+        "fields": {
+            "name": "Food",
+            "amount_type": "EX",
+            "amount": "120.00",
+            "budget": null,
+            "budget_period": 2
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 17,
+        "fields": {
+            "name": "Power",
+            "amount_type": "EX",
+            "amount": "28.00",
+            "budget": null,
+            "budget_period": 2
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 18,
+        "fields": {
+            "name": "Internet",
+            "amount_type": "EX",
+            "amount": "30.00",
+            "budget": null,
+            "budget_period": 2
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 19,
+        "fields": {
+            "name": "Rent",
+            "amount_type": "EX",
+            "amount": "350.00",
+            "budget": null,
+            "budget_period": 2
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 20,
+        "fields": {
+            "name": "Insurance",
+            "amount_type": "EX",
+            "amount": "10.00",
+            "budget": null,
+            "budget_period": 2
+        }
+    },
+    {
+        "model": "budget.amount",
+        "pk": 21,
+        "fields": {
+            "name": "Savings",
+            "amount_type": "EX",
+            "amount": "200.00",
+            "budget": null,
+            "budget_period": 2
+        }
+    }
+]

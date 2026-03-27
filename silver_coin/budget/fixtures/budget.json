@@ -1,0 +1,13 @@
+[
+    {
+        "model": "budget.budget",
+        "pk": 1,
+        "fields": {
+            "name": "Dummy Budget",
+            "description": "A sample budget",
+            "period_type": "weeks",
+            "period_length": 1,
+            "owner": 1
+        }
+    }
+]
