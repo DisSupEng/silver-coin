@@ -30,7 +30,7 @@ Please also ensure that you have Python installed.
 
 Clone the repository to a directory on your machine, navigate to that directory in the terminal.
 
-You need to create a `.env` file in the root directory of the project with the following lines (Please replace the values inside <> with values your own values and remove <>).
+You need to create a `.env` file in the root directory of the project with the following lines (Please replace the values inside <> with your own values and remove <>).
 ```
 DJANGO_SECRET_KEY=""
 POSTGRES_DATABASE="<my_budget_database>"
@@ -48,9 +48,19 @@ python3
 > get_random_secret_key()
 ```
 
-Please copy and paste the value returned from the function and put it into the `DJANGO_SECRET_KEY` value above.
+Please copy and paste the value returned from the function and put it into the `DJANGO_SECRET_KEY` value above without the single quotes at the beginning and end.
 
 ```
 docker compose build
-docker compose up
+docker compose up -d
 ```
+
+You should now be able to see the application running in your web browser by going to `localhost:8000`. You can either create a new user for yourself or see the `Quick Start` section below if you just want to see the application running with some dummy data.
+
+To stop the application run
+```
+docker compose down
+```
+
+## Quick Start
+
