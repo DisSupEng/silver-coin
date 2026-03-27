@@ -18,7 +18,7 @@ class CreateBudget(LoginRequiredMixin, FormView):
     form_class = BudgetForm
     template_name = "budget/budget_form.html"
     success_url = reverse_lazy("dashboard")
-    extra_context = {"action": "Create"}
+    extra_context = {"action": "Create", "page_title": "Create Budget"}
 
     def get_login_url(self):
         return reverse("login")
@@ -66,7 +66,7 @@ class EditBudget(UserMixin, UpdateView):
     form_class = BudgetModelForm
     template_name = "budget/budget_form.html"
     success_url = reverse_lazy("dashboard")
-    extra_context = {"action": "Edit"}
+    extra_context = {"action": "Edit", "page_title": "Edit Budget"}
 
     
     
@@ -76,3 +76,4 @@ class DeleteBudget(UserMixin, DeleteView):
     """
     template_name = "budget/budget_delete.html"
     success_url = reverse_lazy("dashboard")
+    extra_context = {"page_title": "Delete Budget"}
