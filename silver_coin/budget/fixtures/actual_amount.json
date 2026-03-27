@@ -1,0 +1,156 @@
+[
+    {
+        "model": "budget.actualamount",
+        "pk": 1,
+        "fields": {
+            "name": "Work",
+            "occurred_on": "2026-01-03",
+            "amount": "750.00",
+            "estimate": 8,
+            "period": 1
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 2,
+        "fields": {
+            "name": "Supermarket",
+            "occurred_on": "2026-01-04",
+            "amount": "110.00",
+            "estimate": 9,
+            "period": 1
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 3,
+        "fields": {
+            "name": "Power",
+            "occurred_on": "2026-01-07",
+            "amount": "28.00",
+            "estimate": 10,
+            "period": 1
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 4,
+        "fields": {
+            "name": "Internet",
+            "occurred_on": "2026-01-07",
+            "amount": "30.00",
+            "estimate": 11,
+            "period": 1
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 5,
+        "fields": {
+            "name": "Rent",
+            "occurred_on": "2026-01-05",
+            "amount": "350.00",
+            "estimate": 12,
+            "period": 1
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 6,
+        "fields": {
+            "name": "Insurance",
+            "occurred_on": "2026-01-07",
+            "amount": "10.00",
+            "estimate": 13,
+            "period": 1
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 7,
+        "fields": {
+            "name": "Savings",
+            "occurred_on": "2026-01-07",
+            "amount": "200.00",
+            "estimate": 14,
+            "period": 1
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 8,
+        "fields": {
+            "name": "Work",
+            "occurred_on": "2026-01-08",
+            "amount": "800.00",
+            "estimate": 15,
+            "period": 2
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 9,
+        "fields": {
+            "name": "Takeaway",
+            "occurred_on": "2026-01-11",
+            "amount": "20.00",
+            "estimate": 16,
+            "period": 2
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 10,
+        "fields": {
+            "name": "Power",
+            "occurred_on": "2026-01-14",
+            "amount": "28.00",
+            "estimate": 17,
+            "period": 2
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 11,
+        "fields": {
+            "name": "Internet",
+            "occurred_on": "2026-01-14",
+            "amount": "30.00",
+            "estimate": 18,
+            "period": 2
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 12,
+        "fields": {
+            "name": "Rent",
+            "occurred_on": "2026-01-14",
+            "amount": "350.00",
+            "estimate": 19,
+            "period": 2
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 13,
+        "fields": {
+            "name": "Insurance",
+            "occurred_on": "2026-01-14",
+            "amount": "10.00",
+            "estimate": 20,
+            "period": 2
+        }
+    },
+    {
+        "model": "budget.actualamount",
+        "pk": 14,
+        "fields": {
+            "name": "Savings",
+            "occurred_on": "2026-01-14",
+            "amount": "200.00",
+            "estimate": 21,
+            "period": 2
+        }
+    }
+]

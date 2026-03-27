@@ -48,7 +48,7 @@ class BudgetPeriodTests(Authenticate):
 
         self.budget_period = BudgetPeriodFactory.create(start_date=date(2022, 8, 22), budget=self.budget)
 
-        self.assertEquals(self.budget_period.end_date, date(2022, 8, 25))
+        self.assertEqual(self.budget_period.end_date, date(2022, 8, 25))
 
     def test_end_date_weeks(self):
         self.budget.period_type = "weeks"
@@ -57,7 +57,7 @@ class BudgetPeriodTests(Authenticate):
 
         self.budget_period = BudgetPeriodFactory.create(start_date=date(2022, 8, 22), budget=self.budget)
 
-        self.assertEquals(self.budget_period.end_date, date(2022, 10, 2))
+        self.assertEqual(self.budget_period.end_date, date(2022, 10, 2))
 
     def test_end_date_months(self):
         self.budget.period_type = "months"
@@ -67,15 +67,15 @@ class BudgetPeriodTests(Authenticate):
 
         self.budget_period = BudgetPeriodFactory.create(start_date=date(2022, 8, 22), budget=self.budget)
 
-        self.assertEquals(self.budget_period.end_date, date(2023, 5, 21))
+        self.assertEqual(self.budget_period.end_date, date(2023, 5, 21))
 
     def test_is_ended(self):
-        self.assertEquals(self.budget_period.is_ended(), True)
+        self.assertEqual(self.budget_period.is_ended(), True)
 
     def test_amounts(self):
         # Check that the period contains the estimates
         estimates = self.budget_period.estimates.all()
-        self.assertEquals(estimates.count(), 3)
+        self.assertEqual(estimates.count(), 3)
 
     def test_date_overlap_start_date(self):
         self.budget.period_type = "days"
@@ -86,8 +86,8 @@ class BudgetPeriodTests(Authenticate):
         self.budget_period.end_date = date(2023, 7, 8)
         self.budget_period.save()
 
-        self.assertEquals(self.budget_period.start_date, date(2023, 7, 1))
-        self.assertEquals(self.budget_period.end_date, date(2023, 7, 7))
+        self.assertEqual(self.budget_period.start_date, date(2023, 7, 1))
+        self.assertEqual(self.budget_period.end_date, date(2023, 7, 7))
 
         overlapping_period = BudgetPeriodFactory.build(start_date=date(2023, 7, 2), budget=self.budget)
 
@@ -103,8 +103,8 @@ class BudgetPeriodTests(Authenticate):
         self.budget_period.end_date = date(2023, 7, 8)
         self.budget_period.save()
 
-        self.assertEquals(self.budget_period.start_date, date(2023, 7, 1))
-        self.assertEquals(self.budget_period.end_date, date(2023, 7, 7))
+        self.assertEqual(self.budget_period.start_date, date(2023, 7, 1))
+        self.assertEqual(self.budget_period.end_date, date(2023, 7, 7))
 
         overlapping_period = BudgetPeriodFactory.build(
             start_date=date(2023, 6, 30), 
