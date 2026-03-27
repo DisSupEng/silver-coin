@@ -1,0 +1,20 @@
+[
+    {
+        "model": "budget.budgetperiod",
+        "pk": 1,
+        "fields": {
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-07",
+            "budget": 1
+        }
+    },
+    {
+        "model": "budget.budgetperiod",
+        "pk": 2,
+        "fields": {
+            "start_date": "2026-01-08",
+            "end_date": "2026-01-14",
+            "budget": 1
+        }
+    }
+]

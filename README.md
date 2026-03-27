@@ -53,6 +53,9 @@ Please copy and paste the value returned from the function and put it into the `
 ```
 docker compose build
 docker compose up -d
+docker compose exec app python ./manage.py migrate
+docker compose down
+docker compose up -d
 ```
 
 You should now be able to see the application running in your web browser by going to `localhost:8000`. You can either create a new user for yourself or see the `Quick Start` section below if you just want to see the application running with some dummy data.
@@ -63,4 +66,17 @@ docker compose down
 ```
 
 ## Quick Start
+This section explains how to get dummy data into the application so you can see how it works without setting everything up.
 
+The sample data is stored in `budget/fixtures`.
+
+To import this data into the application do the following:
+```
+docker compose exec app python manage.py loaddata user budget amount budget_period actual_amount
+```
+
+To login with the dummy user use the following details on the login screen.
+```
+username: test_user
+password: dummyPassword123!
+```
