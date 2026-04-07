@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools >= 80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "silver-coin"
+description = "A Django budgeting app"
+authors = [
+    {name = "DisSupEng (Connor)"}
+]
+maintainers = [
+    {name = "DisSupEng (Connor)"}
+]
+readme = "README.md"
+license = "MIT"
+version = "0.3.0"
+requires-python = ">= 3.8"
+dependencies = [
+    "Django==5.2",
+    "factory-boy==3.2.1",
+    "Faker==13.15.1",
+    "python-dotenv==0.20.0",
+]
+
+[tool.setuptools]
+py-modules = []

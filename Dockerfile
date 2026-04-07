@@ -1,5 +1,5 @@
 # Use python 3.12
-FROM python:3.12-bookworm
+FROM python:3.12
 # Update and install packages
 RUN apt update && apt upgrade -y
 
