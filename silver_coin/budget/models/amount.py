@@ -46,13 +46,13 @@ class Amount(models.Model):
     objects = AmountManager()
 
 
-    def full_clean(self, exclude=None, validate_unique=True, validate_constraints=True):
+    def full_clean(self, *args, **kwargs):
         """
         An Amount must be linked to either a Budget or Budget Period but not both.
         Amount must be greater than zero
         One time amounts can only be linked to a Budget Period
         """
-        super().full_clean()
+        super().full_clean(*args, **kwargs)
 
         if self.budget is None and self.budget_period is None:
             raise ValidationError("An Amount must be linked to either a Budget or BudgetPeriod")

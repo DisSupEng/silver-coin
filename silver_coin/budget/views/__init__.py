@@ -21,3 +21,5 @@ from .amount import CreateActualExpense
 from .amount import EditActualExpense
 from .amount import DeleteActualExpense
 from .amount import ActualExpenseSummary
+from .goal import CreateGoal
+from .goal import EditGoal

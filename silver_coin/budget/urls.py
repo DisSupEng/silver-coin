@@ -23,6 +23,8 @@ from .views import CreateActualExpense
 from .views import EditActualExpense
 from .views import DeleteActualExpense
 from .views import ActualExpenseSummary
+from .views import CreateGoal
+from .views import EditGoal
 
 
 urlpatterns = [
@@ -52,5 +54,8 @@ urlpatterns = [
     path("budget_period/<int:period_id>/actual_income/delete/<int:pk>", DeleteActualIncome.as_view(), name="delete_actual_income"),
     path("budget_period/<int:period_id>/actual_expense/create/", CreateActualExpense.as_view(), name="create_actual_expense"),
     path("budget_period/<int:period_id>/actual_expense/edit/<int:pk>", EditActualExpense.as_view(), name="edit_actual_expense"),
-    path("budget_period/<int:period_id>/actual_expense/delete/<int:pk>", DeleteActualExpense.as_view(), name="delete_actual_expense")
+    path("budget_period/<int:period_id>/actual_expense/delete/<int:pk>", DeleteActualExpense.as_view(), name="delete_actual_expense"),
+    # Goal URLs
+    path("goal/create/", CreateGoal.as_view(), name="create_goal"),
+    path("goal/edit/<int:pk>", EditGoal.as_view(), name="edit_goal"),
 ]

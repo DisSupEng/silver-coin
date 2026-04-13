@@ -40,9 +40,15 @@ class Budget(models.Model):
         Returns the total expense.
         """
         return sum([expense.amount for expense in self.amounts.filter(amount_type="EX")])
+
+    def total_goal(self):
+        """
+        Returns the total goal amount
+        """
+        return sum([goal.expected_contribution for goal in self.goals.all()])
     
     def net_amount(self):
         """
         The estimated NET amount of the budget.
         """
-        return self.total_income() - self.total_expense()
+        return self.total_income() - self.total_expense() - self.total_goal()
